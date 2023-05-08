@@ -4,7 +4,12 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -17,10 +22,22 @@ enum class Direction {
 }
 
 @Composable
-fun rememberDismissibleState(containerWidthPx: Float, containerHeightPx: Float): DismissibleState {
+fun rememberDismissibleState(
+    containerWidthPx: Float,
+    containerHeightPx: Float,
+    maxRotationZ: Float = 15f,
+    //TODO it's pixels per second so it won't work the same way on different devices
+    dismissVelocity: Float = 2000f
+): DismissibleState {
     val layoutDirection = LocalLayoutDirection.current
     return remember {
-        DismissibleState(containerWidthPx, containerHeightPx, layoutDirection)
+        DismissibleState(
+            containerWidthPx,
+            containerHeightPx,
+            maxRotationZ,
+            dismissVelocity,
+            layoutDirection
+        )
     }
 }
 
@@ -29,12 +46,25 @@ class DismissibleState(
     val containerWidth: Float,
     val containerHeight: Float,
     val maxRotationZ: Float,
+    val dismissVelocity: Float,
     private val layoutDirection: LayoutDirection
 ) {
-    val offset = Animatable(offset(0f, 0f), Offset.VectorConverter)
+    val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
     val endX = getEndX(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
     val endY = getEndY(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
+
+    //TODO they should probably be a state, not just floats
+    val horizontalDismissProgress by derivedStateOf {
+        offset.value.x / containerWidth
+    }
+    val verticalDismissProgress by derivedStateOf {
+        offset.value.y / containerHeight
+    }
+
+    val rotationZ by derivedStateOf {
+        maxRotationZ * horizontalDismissProgress
+    }
 
     /**
      * The [Direction] the composable was swiped at.
@@ -44,13 +74,16 @@ class DismissibleState(
     var dismissedDirection: Direction? by mutableStateOf(null)
         private set
 
-    internal suspend fun reset() {
-        offset.animateTo(offset(0f, 0f), tween(400))
+    internal suspend fun reset(animationSpec: AnimationSpec<Offset>? = null) {
+        dismissedDirection = null
+        if (animationSpec != null) {
+            offset.animateTo(Offset.Zero, animationSpec)
+        } else {
+            offset.snapTo(Offset.Zero)
+        }
     }
 
     suspend fun dismiss(direction: Direction, spec: AnimationSpec<Offset> = tween(400)) {
-//        val endX = containerWidth * 1.5f
-//        val endY = containerHeight
         val directionMultiplier = if (layoutDirection == LayoutDirection.Rtl) -1 else 1
         when (direction) {
             Direction.Start -> offset.animateTo(offset(x = -endX * directionMultiplier), spec)
