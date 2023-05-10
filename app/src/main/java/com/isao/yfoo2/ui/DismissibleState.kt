@@ -74,7 +74,7 @@ class DismissibleState(
     var dismissedDirection: Direction? by mutableStateOf(null)
         private set
 
-    internal suspend fun reset(animationSpec: AnimationSpec<Offset>? = null) {
+    internal suspend fun reset(animationSpec: AnimationSpec<Offset>? = tween(400)) {
         dismissedDirection = null
         if (animationSpec != null) {
             offset.animateTo(Offset.Zero, animationSpec)

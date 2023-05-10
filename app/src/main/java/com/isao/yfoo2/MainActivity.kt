@@ -101,74 +101,35 @@ class MainActivity : ComponentActivity() {
         dismissedItems: MutableList<T>,
         modifier: Modifier = Modifier,
         content: @Composable (T) -> Unit
-    ) {
-        BoxWithConstraints(modifier) {
-            val topItem = items[dismissedItems.size]
-            val backgroundItem = items[dismissedItems.size + 1]
+    ) = BoxWithConstraints(modifier) {
+        val scope = rememberCoroutineScope()
 
-            val scope = rememberCoroutineScope()
+        val topItem = items[dismissedItems.size]
+        val backgroundItem = items[dismissedItems.size + 1]
 
-            if (backgroundItem != null) {
-                content(backgroundItem)
-            }
+        if (backgroundItem != null) {
+            content(backgroundItem)
+        }
 
-            val containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() }
-            val containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() }
-            val topItemState = rememberDismissibleState(
-                containerWidthPx = containerWidthPx,
-                containerHeightPx = containerHeightPx,
-            )
-//            LaunchedEffect(topItem) {
-//                topItemState.reset()
-//            }
-            if (topItem != null) {
-                Box(Modifier.dismissible(
-                    state = topItemState,
-                    directions = arrayOf(Direction.Start, Direction.End),
-                    onDismiss = {
-                        dismissedItems.add(topItem)
-                    },
-                    onDismissCancel = {}
-                )) {
-                    content(topItem)
-                }
-            }
+        val topItemState = rememberDismissibleState(
+            containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
+            containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
+        )
 
-//            val maxCardSwipeDistanceDp = maxWidth
-//
-//            var dummyCardSwipeProgress by remember { mutableStateOf(0f) }
-//            val dummyCardOffsetDp = remember {
-//                derivedStateOf {
-//                    maxCardSwipeDistanceDp * dummyCardSwipeProgress
-//                }
-//            }
-            var prevItem by remember { mutableStateOf<T?>(null) }
-
-//            val scope = rememberCoroutineScope()
-            SideEffect {
-                if (prevItem != topItem) {
-                    prevItem = topItem
+        if (topItem != null) {
+            Box(Modifier.dismissible(
+                state = topItemState,
+                directions = arrayOf(Direction.Start, Direction.End),
+                onDismiss = {
+                    dismissedItems.add(topItem)
                     scope.launch {
-                        topItemState.reset()
+                        topItemState.reset(null)
                     }
-                }
+                },
+                onDismissCancel = {}
+            )) {
+                content(topItem)
             }
-//
-//            if (backgroundItem != null) {
-//                content(backgroundItem)
-//            }
-//            if (topItem != null) {
-//                Box(Modifier.clickable { dismissedItems.add(topItem) }) {
-//                    content(topItem)
-//                }
-//            }
-//            val dismissedItem = dismissedItems.lastOrNull()
-//            if (dismissedItem != null) {
-//                Box(Modifier.offset { IntOffset(dummyCardOffsetDp.value.roundToPx(), 0) }
-//                ) {
-//                    content(dismissedItem)
-//                }
-//            }
         }
     }
 }
