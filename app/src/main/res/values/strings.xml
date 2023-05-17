@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Yfoo2</string>
+    <string name="feed">Feed</string>
+    <string name="liked">Liked</string>
 </resources>
