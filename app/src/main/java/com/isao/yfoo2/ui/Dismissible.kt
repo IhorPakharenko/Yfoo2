@@ -19,9 +19,7 @@ fun Modifier.dismissible(
     canDismiss: (Offset, Float, Float) -> Boolean = { _, horizontalProgress, verticalProgress ->
         abs(horizontalProgress) > 0.3f || abs(verticalProgress) > 0.3f
         //TODO consider replacing the two progresses with an offset
-    },
-    onDismiss: (Direction) -> Unit,
-    onDismissCancel: () -> Unit
+    }
 ) = pointerInput(Unit) {
     coroutineScope {
         val velocityTracker = VelocityTracker()
@@ -52,16 +50,14 @@ fun Modifier.dismissible(
                                 if (verticalDismissProgress > 0) Direction.Down else Direction.Up
                             }
                         state.dismiss(direction)
-                        onDismiss(direction)
                     } else {
-                        onDismissCancel()
                         state.reset()
                     }
                 }
             },
             onDragCancel = {
                 launch {
-                    onDismissCancel()
+                    state.onDismissCancel()
                     state.reset()
                 }
             },

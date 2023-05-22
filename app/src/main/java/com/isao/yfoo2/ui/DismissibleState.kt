@@ -27,7 +27,9 @@ fun rememberDismissibleState(
     containerHeightPx: Float,
     maxRotationZ: Float = 15f,
     //TODO it's pixels per second so it won't work the same way on different devices
-    dismissVelocity: Float = 2000f
+    dismissVelocity: Float = 2000f,
+    onDismiss: DismissibleState.(Direction) -> Unit = {},
+    onDismissCancel: () -> Unit = {}
 ): DismissibleState {
     val layoutDirection = LocalLayoutDirection.current
     return remember {
@@ -36,7 +38,9 @@ fun rememberDismissibleState(
             containerHeightPx,
             maxRotationZ,
             dismissVelocity,
-            layoutDirection
+            layoutDirection,
+            onDismiss,
+            onDismissCancel
         )
     }
 }
@@ -47,7 +51,9 @@ class DismissibleState(
     val containerHeight: Float,
     val maxRotationZ: Float,
     val dismissVelocity: Float,
-    private val layoutDirection: LayoutDirection
+    private val layoutDirection: LayoutDirection,
+    val onDismiss: DismissibleState.(Direction) -> Unit, //TODO consider using rememberUpdatedState
+    val onDismissCancel: () -> Unit
 ) {
     val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
@@ -92,6 +98,7 @@ class DismissibleState(
             Direction.Down -> offset.animateTo(offset(y = endY), spec)
         }
         this.dismissedDirection = direction
+        onDismiss(direction)
     }
 
     private fun offset(x: Float = offset.value.x, y: Float = offset.value.y): Offset {

@@ -7,20 +7,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -37,9 +51,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -62,12 +78,15 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.isao.yfoo2.ui.Direction
+import com.isao.yfoo2.ui.DismissibleState
 import com.isao.yfoo2.ui.Screen
 import com.isao.yfoo2.ui.YfooNavGraph
 import com.isao.yfoo2.ui.dismissible
 import com.isao.yfoo2.ui.rememberDismissibleState
+import com.isao.yfoo2.ui.scale
 import com.isao.yfoo2.ui.theme.Yfoo2Theme
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 enum class BottomNavigationScreen(
@@ -156,7 +175,7 @@ fun FeedScreen(modifier: Modifier = Modifier) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title = {
-                Text(text = "Y-foo")
+                Text(stringResource(R.string.app_name))
             },
             modifier = Modifier.onGloballyPositioned {
                 topAppBarBounds = it.boundsInRoot()
@@ -193,18 +212,151 @@ fun FeedScreen(modifier: Modifier = Modifier) {
                 }
 
                 else -> {
-                    SwipeableStack(
-                        items = items,
-                        dismissedItems = dismissedItems,
-                    ) { item ->
-                        WaifuCard(url = item, modifier = Modifier.onGloballyPositioned {
-                            topCardBounds = it.boundsInRoot()
-                        })
+                    BoxWithConstraints {
+                        val scope = rememberCoroutineScope()
+
+                        val topItem = items[dismissedItems.size]
+
+                        val topItemState = rememberDismissibleState(
+                            containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
+                            containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
+                            onDismiss = {
+                                dismissedItems.add(topItem!!) //TODO nullability
+                                scope.launch {
+                                    reset(null)
+                                }
+                            }
+                        )
+
+                        SwipeableStack(
+                            topItemState = topItemState,
+                            items = items,
+                            dismissedItems = dismissedItems,
+                        ) { item ->
+                            WaifuCard(
+                                url = item,
+                                modifier = Modifier.onGloballyPositioned {
+                                    topCardBounds = it.boundsInRoot()
+                                }
+                            )
+                        }
+                        val dislikeButtonScale by remember {
+                            derivedStateOf {
+                                getButtonScale(topItemState.horizontalDismissProgress * -1)
+                            }
+                        }
+                        val likeButtonScale by remember {
+                            derivedStateOf {
+                                getButtonScale(topItemState.horizontalDismissProgress)
+                            }
+                        }
+
+                        val animatedDislikeButtonScale by animateFloatAsState(dislikeButtonScale)
+                        val animatedLikeButtonScale by animateFloatAsState(likeButtonScale)
+
+                        Row(
+                            Modifier
+                                .padding(bottom = 48.dp)
+                                .align(Alignment.BottomCenter),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            FeedButton(
+                                onClick = {
+                                    scope.launch {
+                                        topItemState.dismiss(Direction.Start)
+                                    }
+                                },
+                                modifier = Modifier.graphicsLayer {
+                                    scaleX = animatedDislikeButtonScale
+                                    scaleY = animatedDislikeButtonScale
+                                }
+                            ) {
+                                DislikeIcon()
+                            }
+                            Spacer(Modifier.width(72.dp))
+                            FeedButton(
+                                onClick = {
+                                    scope.launch {
+                                        topItemState.dismiss(Direction.End)
+                                    }
+                                },
+                                modifier = Modifier.graphicsLayer {
+                                    scaleX = animatedLikeButtonScale
+                                    scaleY = animatedLikeButtonScale
+                                }
+                            ) {
+                                LikeIcon()
+                            }
+                        }
                     }
                 }
             }
         }
     }
+}
+
+private fun getButtonScale(dismissProgress: Float): Float {
+    val minProgress = 0f
+    val maxProgress = 0.5f
+    val minScale = 0.8f
+    val maxScale = 1f
+
+    return when {
+        dismissProgress < minProgress -> minScale
+        dismissProgress > maxProgress -> maxScale
+        else -> dismissProgress.scale(
+            oldMin = minProgress, oldMax = maxProgress,
+            newMin = minScale, newMax = maxScale,
+        )
+    }
+}
+
+@Composable
+fun FeedButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+            .border(
+                width = 2.dp,
+                color = Color.White,
+                shape = CircleShape
+            )
+            .background(
+                color = Color.Black.copy(alpha = 0.3f),
+                shape = CircleShape
+            )
+            .size(80.dp),
+        enabled = enabled,
+    ) {
+        CompositionLocalProvider(LocalContentColor provides Color.White) {
+            content()
+        }
+    }
+}
+
+@Composable
+private fun DislikeIcon(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Rounded.Close,
+        contentDescription = stringResource(R.string.nope),
+        modifier = modifier.size(32.dp),
+        tint = Color.White
+    )
+}
+
+@Composable
+private fun LikeIcon(modifier: Modifier = Modifier) {
+    Icon(
+        imageVector = Icons.Rounded.Favorite,
+        contentDescription = stringResource(R.string.like),
+        modifier = modifier.size(32.dp),
+        tint = Color.White
+    )
 }
 
 @Composable
@@ -223,7 +375,9 @@ fun ColorCard(color: Color, modifier: Modifier = Modifier) {
 @Composable
 fun WaifuCard(url: String, modifier: Modifier = Modifier) {
     Card(
-        Modifier.padding(horizontal = 16.dp, vertical = 32.dp).then(modifier)
+        Modifier
+            .padding(horizontal = 16.dp, vertical = 32.dp)
+            .then(modifier)
     ) {
         AsyncImage(
             model = url,
@@ -234,15 +388,15 @@ fun WaifuCard(url: String, modifier: Modifier = Modifier) {
     }
 }
 
+//TODO this composable is kind of useless now, consider removing
 @Composable
 fun <T : Any> SwipeableStack(
+    topItemState: DismissibleState,
     items: LazyPagingItems<T>,
     dismissedItems: MutableList<T>, //TODO avoid using MutableList
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
-) = BoxWithConstraints(modifier) {
-    val scope = rememberCoroutineScope()
-
+) = Box(modifier) {
     val topItem = items[dismissedItems.size]
     val backgroundItem = items[dismissedItems.size + 1]
 
@@ -250,23 +404,13 @@ fun <T : Any> SwipeableStack(
         content(backgroundItem)
     }
 
-    val topItemState = rememberDismissibleState(
-        containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
-        containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
-    )
-
     if (topItem != null) {
-        Box(Modifier.dismissible(
-            state = topItemState,
-            directions = arrayOf(Direction.Start, Direction.End),
-            onDismiss = {
-                dismissedItems.add(topItem)
-                scope.launch {
-                    topItemState.reset(null)
-                }
-            },
-            onDismissCancel = {}
-        )) {
+        Box(
+            Modifier.dismissible(
+                state = topItemState,
+                directions = arrayOf(Direction.Start, Direction.End)
+            )
+        ) {
             content(topItem)
         }
     }
@@ -299,10 +443,9 @@ class WaifuPagingSource : PagingSource<Int, String>() {
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, String> {
-        val random = Random(params.key ?: 0)
         return LoadResult.Page(
             data = List(10) {
-                "https://www.thiswaifudoesnotexist.net/example-${random.nextInt(100000 + 1)}.jpg"
+                "https://www.thiswaifudoesnotexist.net/example-${Random.nextInt(100000 + 1)}.jpg"
             },
             prevKey = null,
             nextKey = (params.key ?: 0) + params.loadSize
