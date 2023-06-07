@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui.theme
+package com.isao.yfoo2.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui.theme
+package com.isao.yfoo2.core.theme
 
 import android.app.Activity
 import android.os.Build

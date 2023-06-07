@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui
+package com.isao.yfoo2.presentation.composable
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.ui.Modifier

@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui
+package com.isao.yfoo2.core.extensions
 
 /**
  * Scales float value from an old range to a new one

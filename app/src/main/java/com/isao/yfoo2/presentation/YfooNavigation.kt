@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui
+package com.isao.yfoo2.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
@@ -9,8 +9,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.isao.yfoo2.BottomNavigationScreen
-import com.isao.yfoo2.FeedScreen
+import com.isao.yfoo2.core.BottomNavigationScreen
 
 //TODO do we need it to be sealed class? Why not enum? Will this approach work with params?
 sealed class Screen(val route: String) {
@@ -20,14 +19,14 @@ sealed class Screen(val route: String) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun YfooNavGraph(
+fun YfooNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberAnimatedNavController(),
     startDestination: String = BottomNavigationScreen.Feed.route
 ) {
     AnimatedNavHost(navController, startDestination, modifier) {
         composable(BottomNavigationScreen.Feed.route) {
-            FeedScreen()
+//            FeedScreen()
         }
         composable(BottomNavigationScreen.Liked.route) {
             Box(Modifier.fillMaxSize())

@@ -1,13 +1,15 @@
-@file:OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
-
-package com.isao.yfoo2
+package com.isao.yfoo2.core
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,19 +21,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.isao.yfoo2.core.BottomNavigationScreen
+import com.isao.yfoo2.R
+import com.isao.yfoo2.core.navigation.NavigationFactory
+import com.isao.yfoo2.core.navigation.NavigationHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import com.isao.yfoo2.presentation.YfooNavHost
+import com.isao.yfoo2.presentation.Screen
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-@ExperimentalMaterial3Api
-@Deprecated(message = "Replaced by the other MainActivity")
+enum class BottomNavigationScreen(
+    val route: String,
+    @StringRes val nameRes: Int,
+    val icon: ImageVector
+) {
+    Feed(Screen.Feed.route, R.string.feed, Icons.Filled.Explore),
+    Liked(Screen.Liked.route, R.string.liked, Icons.Filled.Favorite),
+}
+
+@AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+
+    @Inject
+    lateinit var navigationFactories: @JvmSuppressWildcards Set<NavigationFactory>
+
+    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -47,6 +67,7 @@ class MainActivity : FragmentActivity() {
                             BottomNavigationScreen.Liked
                         )
                     }
+
                     Scaffold(bottomBar = {
                         NavigationBar {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -81,8 +102,15 @@ class MainActivity : FragmentActivity() {
                             }
                         }
                     }) { padding ->
-                        YfooNavHost(
+//                        YfooNavHost(
+//                            navController = navController,
+//                            modifier = Modifier
+//                                .fillMaxHeight()
+//                                .padding(padding),
+//                        )
+                        NavigationHost(
                             navController = navController,
+                            factories = navigationFactories,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(padding),

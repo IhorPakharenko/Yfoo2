@@ -1,4 +1,4 @@
-package com.isao.yfoo2.ui
+package com.isao.yfoo2.presentation.composable
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
