@@ -9,6 +9,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -32,6 +33,8 @@ fun rememberDismissibleState(
     onDismissCancel: () -> Unit = {}
 ): DismissibleState {
     val layoutDirection = LocalLayoutDirection.current
+    val onDismissState = rememberUpdatedState(onDismiss)
+    val onDismissCancelState = rememberUpdatedState(onDismissCancel)
     return remember {
         DismissibleState(
             containerWidthPx,
@@ -39,8 +42,8 @@ fun rememberDismissibleState(
             maxRotationZ,
             dismissVelocity,
             layoutDirection,
-            onDismiss,
-            onDismissCancel
+            { onDismissState.value.invoke(this, it) },
+            { onDismissCancelState.value.invoke() }
         )
     }
 }

@@ -56,6 +56,9 @@ fun CardFeed(
 //        val topItem = items[dismissedItems.size]
 
         val backgroundItem = uiState.items.getOrNull(uiState.items.lastIndex - 1)
+//        val topItem by remember(uiState) {
+//            mutableStateOf(uiState.items.getOrNull(uiState.items.lastIndex))
+//        }
         val topItem = uiState.items.getOrNull(uiState.items.lastIndex)
 
         val topItemState = rememberDismissibleState(
@@ -90,7 +93,7 @@ fun CardFeed(
                 )
             ) {
                 WaifuCard(
-                    url = topItem.imageUrl,
+                    url = topItem!!.imageUrl,//TODO nullability
                     modifier = Modifier.onGloballyPositioned {
 //                        topCardBounds = it.boundsInRoot()
                     }

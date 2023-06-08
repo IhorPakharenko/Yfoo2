@@ -1,20 +1,16 @@
 package com.isao.yfoo2.presentation.feed
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.isao.yfoo2.core.BaseViewModel
 import com.isao.yfoo2.domain.usecase.AddRandomFeedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
 import com.isao.yfoo2.domain.usecase.LikeImageUseCase
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val MIN_ITEM_COUNT = 20
@@ -29,8 +25,6 @@ class FeedViewModel @Inject constructor(
     savedStateHandle,
     FeedUiState(items = emptyList(), dismissedItems = emptyList())
 ) {
-    private var addRandomImagesJob: Job? = null
-
     init {
         observeContinuousChanges(
             getFeedImagesUseCase().map { result ->
@@ -46,19 +40,6 @@ class FeedViewModel @Inject constructor(
                 )
             }
         )
-
-        //TODO should it make use of PartialStates?
-        viewModelScope.launch {
-            uiState.collectLatest { state ->
-                if (addRandomImagesJob?.isActive == true) return@collectLatest
-                val itemsToFetchCount = MIN_ITEM_COUNT - state.items.size
-                addRandomImagesJob = launch {
-                    repeat(itemsToFetchCount) {
-                        addRandomFeedImageUseCase()
-                    }
-                }
-            }
-        }
     }
 
     override fun mapIntents(intent: FeedIntent): Flow<FeedPartialState> = when (intent) {
@@ -78,6 +59,7 @@ class FeedViewModel @Inject constructor(
 
         is FeedPartialState.ItemSaved -> previousState
         is FeedPartialState.ErrorSavingItem -> previousState
+        //TODO bugs when multiple items are the equal
         is FeedPartialState.ItemDismissed -> previousState.copy(
             items = previousState.items - partialState.item,
             dismissedItems = previousState.dismissedItems + partialState.item
