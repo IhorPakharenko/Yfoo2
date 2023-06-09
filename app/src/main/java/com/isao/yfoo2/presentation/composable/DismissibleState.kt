@@ -28,7 +28,7 @@ fun rememberDismissibleState(
     containerHeightPx: Float,
     maxRotationZ: Float = 15f,
     //TODO it's pixels per second so it won't work the same way on different devices
-    dismissVelocity: Float = 2000f,
+    dismissVelocity: Float = 400f,
     onDismiss: DismissibleState.(Direction) -> Unit = {},
     onDismissCancel: () -> Unit = {}
 ): DismissibleState {

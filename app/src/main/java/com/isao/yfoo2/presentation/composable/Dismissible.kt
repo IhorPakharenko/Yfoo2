@@ -10,53 +10,53 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 
 //TODO support rtl
+//TODO decide which parameters go to state and which go here
 fun Modifier.dismissible(
     state: DismissibleState,
     directions: Array<Direction> = Direction.values(), //TODO replace with immutable list
-    canDismiss: (Offset, Float, Float) -> Boolean = { _, horizontalProgress, verticalProgress ->
-        abs(horizontalProgress) > 0.3f || abs(verticalProgress) > 0.3f
-    }
+    minHorizontalProgressToDismiss: Float = 0.5f,
+    minVerticalProgressToDismiss: Float = 0.5f,
 ) = pointerInput(Unit) {
+    check(minHorizontalProgressToDismiss > 0f && minHorizontalProgressToDismiss <= 1) {
+        "minHorizontalProgressToDismiss must be greater than 0 and less than or equal to 1"
+    }
+    check(minVerticalProgressToDismiss > 0f && minVerticalProgressToDismiss <= 1) {
+        "minVerticalProgressToDismiss must be greater than 0 and less than or equal to 1"
+    }
+
     coroutineScope {
         val velocityTracker = VelocityTracker()
         detectDragGestures(
             onDragStart = { velocityTracker.resetTracking() },
             onDragEnd = {
                 launch {
+                    val coercedVelocity = velocityTracker.calculateVelocity().coerceIn(
+                        allowedDirections = directions
+                    )
+                    //TODO coercing to maxWidth and maxHeight might be pointless
                     val coercedOffset = state.offset.targetValue.coerceIn(
                         allowedDirections = directions,
                         maxWidth = state.containerWidth,
                         maxHeight = state.containerHeight
                     )
-                    val canDismissDueToPosition = canDismiss(
-                        coercedOffset,
-                        coercedOffset.x / state.containerWidth,
-                        coercedOffset.y / state.containerHeight,
-                    )
-
-                    val coercedVelocity = velocityTracker.calculateVelocity().coerceIn(
-                        allowedDirections = directions,
-                        maxWidth = state.containerWidth,
-                        maxHeight = state.containerHeight
-                    )
-                    val canDismissDueToVelocity =
-                        coercedVelocity.x > state.dismissVelocity
-                                || coercedVelocity.y > state.dismissVelocity
-
-                    if (canDismissDueToPosition || canDismissDueToVelocity) {
-                        val horizontalDismissProgress = state.horizontalDismissProgress
-                        val verticalDismissProgress = state.verticalDismissProgress
-                        val direction =
-                            if (abs(horizontalDismissProgress) > abs(verticalDismissProgress)) {
-                                if (horizontalDismissProgress > 0) Direction.End else Direction.Start
-                            } else {
-                                if (verticalDismissProgress > 0) Direction.Down else Direction.Up
-                            }
-                        state.dismiss(direction)
+                    val dismissDirection: Direction? =
+                        getDismissDirection(
+                            valueX = coercedVelocity.x,
+                            valueY = coercedVelocity.y,
+                            minValueX = state.dismissVelocity,
+                            minValueY = state.dismissVelocity
+                        ) ?: getDismissDirection(
+                            valueX = coercedOffset.x,
+                            valueY = coercedOffset.y,
+                            minValueX = state.containerWidth,
+                            minValueY = state.containerHeight
+                        )
+                    if (dismissDirection != null) {
+                        state.dismiss(dismissDirection)
                     } else {
                         state.reset()
                     }
@@ -97,12 +97,10 @@ private fun Offset.coerceIn(
 )
 
 private fun Velocity.coerceIn(
-    allowedDirections: Array<Direction>,
-    maxWidth: Float,
-    maxHeight: Float,
+    allowedDirections: Array<Direction>
 ): Velocity = copy(
-    x = x.coerceWidthIn(allowedDirections, maxWidth),
-    y = y.coerceHeightIn(allowedDirections, maxHeight)
+    x = x.coerceWidthIn(allowedDirections, Float.MAX_VALUE),
+    y = y.coerceHeightIn(allowedDirections, Float.MAX_VALUE)
 )
 
 private fun Float.coerceWidthIn(
@@ -120,3 +118,23 @@ private fun Float.coerceHeightIn(
     if (allowedDirections.contains(Direction.Up)) -maxHeight else 0f,
     if (allowedDirections.contains(Direction.Down)) maxHeight else 0f,
 )
+
+//TODO add comments
+private fun getDismissDirection(
+    valueX: Float,
+    valueY: Float,
+    minValueX: Float,
+    minValueY: Float
+): Direction? {
+    return listOf(
+        Direction.End to valueX / minValueX,
+        Direction.Start to valueX.absoluteValue / minValueX,
+        Direction.Down to valueY / minValueY,
+        Direction.Up to valueY.absoluteValue / minValueY,
+    )
+        .sortedBy { (_, ratio) -> ratio }
+        .firstOrNull { (_, ratio) ->
+            ratio >= 1
+        }
+        ?.first
+}
