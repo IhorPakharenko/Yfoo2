@@ -18,6 +18,7 @@ class GetFeedImagesUseCase @Inject constructor(
         return feedImageRepository
             .getImages()
             .onEach { items ->
+                //TODO Unknown behavior when launching multiple UseCase instances
                 val itemsToFetchCount = MIN_ITEM_COUNT - items.size
                 repeat(itemsToFetchCount) {
                     feedImageRepository.addRandomFeedImage()

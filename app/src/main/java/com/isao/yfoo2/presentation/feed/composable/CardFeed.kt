@@ -22,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -129,10 +131,16 @@ fun CardFeed(
                 .align(Alignment.BottomCenter),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            //TODO While this workaround works, it looks ugly and I feel there is a better way.
+            // Trigger the dismiss animation only after the previous one has ended
+            var isCardBeingDismissedByButton by remember { mutableStateOf(false) }
             FeedButton(
                 onClick = {
                     scope.launch {
+                        if (isCardBeingDismissedByButton) return@launch
+                        isCardBeingDismissedByButton = true
                         topItemState.dismiss(Direction.Start)
+                        isCardBeingDismissedByButton = false
                     }
                 },
                 modifier = Modifier.graphicsLayer {
@@ -146,7 +154,10 @@ fun CardFeed(
             FeedButton(
                 onClick = {
                     scope.launch {
+                        if (isCardBeingDismissedByButton) return@launch
+                        isCardBeingDismissedByButton = true
                         topItemState.dismiss(Direction.End)
+                        isCardBeingDismissedByButton = false
                     }
                 },
                 modifier = Modifier.graphicsLayer {

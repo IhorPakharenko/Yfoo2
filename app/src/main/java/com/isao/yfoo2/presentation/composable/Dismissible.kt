@@ -19,7 +19,6 @@ fun Modifier.dismissible(
     directions: Array<Direction> = Direction.values(), //TODO replace with immutable list
     canDismiss: (Offset, Float, Float) -> Boolean = { _, horizontalProgress, verticalProgress ->
         abs(horizontalProgress) > 0.3f || abs(verticalProgress) > 0.3f
-        //TODO consider replacing the two progresses with an offset
     }
 ) = pointerInput(Unit) {
     coroutineScope {

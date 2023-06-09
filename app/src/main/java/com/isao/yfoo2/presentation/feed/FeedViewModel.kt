@@ -49,7 +49,6 @@ class FeedViewModel @Inject constructor(
         partialState: FeedPartialState
     ): FeedUiState = when (partialState) {
         //TODO are these partial states needed if they don't change the state?
-        is FeedPartialState.ItemSaved -> previousState
         is FeedPartialState.ErrorSavingItem -> previousState
         is FeedPartialState.ErrorDeletingItem -> previousState
         is FeedPartialState.ItemDismissed -> previousState.copy(
@@ -73,9 +72,6 @@ class FeedViewModel @Inject constructor(
         val item = uiState.value.items.first { it.id == id }
         emit(FeedPartialState.ItemDismissed(item))
         likeImageUseCase(id)
-            .onSuccess {
-                emit(FeedPartialState.ItemSaved(item))
-            }
             .onFailure {
                 //TODO show error
                 emit(FeedPartialState.ErrorSavingItem(it))

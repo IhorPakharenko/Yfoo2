@@ -3,7 +3,6 @@ package com.isao.yfoo2.presentation.feed
 import com.isao.yfoo2.presentation.model.FeedItemDisplayable
 
 sealed class FeedPartialState {
-    data class ItemSaved(val item: FeedItemDisplayable) : FeedPartialState()
 
     data class ErrorSavingItem(val throwable: Throwable) : FeedPartialState()
 
