@@ -52,14 +52,10 @@ fun CardFeed(
     BoxWithConstraints {
         val scope = rememberCoroutineScope()
 
-//        val backgroundItem = items[dismissedItems.size + 1]
-//        val topItem = items[dismissedItems.size]
+        val notDismissedItems = uiState.items.filterNot { it.isDismissed }
 
-        val backgroundItem = uiState.items.getOrNull(uiState.items.lastIndex - 1)
-//        val topItem by remember(uiState) {
-//            mutableStateOf(uiState.items.getOrNull(uiState.items.lastIndex))
-//        }
-        val topItem = uiState.items.getOrNull(uiState.items.lastIndex)
+        val backgroundItem = notDismissedItems.getOrNull(1)
+        val topItem = notDismissedItems.getOrNull(0)
 
         val topItemState = rememberDismissibleState(
             containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },

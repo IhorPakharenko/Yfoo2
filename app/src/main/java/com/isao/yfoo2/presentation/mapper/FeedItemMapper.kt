@@ -7,5 +7,6 @@ fun FeedImage.toPresentationModel() = FeedItemDisplayable(
     id = id,
     source = source,
     imageUrl = source.getImageUrl(id),
-    sourceUrl = source.websiteUrl
+    sourceUrl = source.websiteUrl,
+    isDismissed = false
 )

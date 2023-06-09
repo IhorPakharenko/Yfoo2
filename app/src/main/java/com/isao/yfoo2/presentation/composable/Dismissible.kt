@@ -27,6 +27,7 @@ fun Modifier.dismissible(
             onDragStart = { velocityTracker.resetTracking() },
             onDragEnd = {
                 launch {
+                    //TODO ignores allowedDirections
                     val coercedOffset = state.offset.targetValue.coerceIn(
                         allowedDirections = directions,
                         maxWidth = state.containerWidth,

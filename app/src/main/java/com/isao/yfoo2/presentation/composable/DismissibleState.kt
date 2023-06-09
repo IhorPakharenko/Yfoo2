@@ -55,7 +55,7 @@ class DismissibleState(
     val maxRotationZ: Float,
     val dismissVelocity: Float,
     private val layoutDirection: LayoutDirection,
-    val onDismiss: DismissibleState.(Direction) -> Unit, //TODO consider using rememberUpdatedState
+    val onDismiss: DismissibleState.(Direction) -> Unit,
     val onDismissCancel: () -> Unit
 ) {
     val offset = Animatable(Offset.Zero, Offset.VectorConverter)
@@ -63,7 +63,7 @@ class DismissibleState(
     val endX = getEndX(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
     val endY = getEndY(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
 
-    //TODO they should probably be a state, not just floats
+    //TODO derivedStateOf here is likely meaningless
     val horizontalDismissProgress by derivedStateOf {
         offset.value.x / containerWidth
     }

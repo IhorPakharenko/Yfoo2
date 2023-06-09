@@ -25,13 +25,19 @@ class FeedImageRepositoryImpl @Inject constructor(
         return feedImageDao.getFeedImage(id).map { it.toDomainModel() }
     }
 
+    /**
+     * Generates items and tries to insert them until an item with a non-repeated url is generated
+     */
     override suspend fun addRandomFeedImage() {
-        feedImageDao.saveFeedImage(
-            FeedImage(
-                id = Random.nextInt(100000 + 1).toString(),
-                source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
-            ).toEntityModel()
-        )
+        var insertedRowId: Long
+        do {
+            insertedRowId = feedImageDao.saveFeedImage(
+                FeedImage(
+                    id = Random.nextInt(100000 + 1).toString(),
+                    source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
+                ).toEntityModel()
+            )
+        } while (insertedRowId == -1L)
     }
 
     override suspend fun deleteImage(id: String) {

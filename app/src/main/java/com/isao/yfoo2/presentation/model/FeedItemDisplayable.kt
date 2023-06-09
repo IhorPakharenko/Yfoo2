@@ -10,4 +10,5 @@ data class FeedItemDisplayable(
     val source: ImageSource,
     val imageUrl: String,
     val sourceUrl: String,
+    val isDismissed: Boolean
 ) : Parcelable

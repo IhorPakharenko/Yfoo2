@@ -1,8 +1,9 @@
 package com.isao.yfoo2.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 import com.isao.yfoo2.data.local.model.FeedImageCached
 import kotlinx.coroutines.flow.Flow
 
@@ -15,8 +16,8 @@ interface FeedImageDao {
     @Query("SELECT * FROM FeedImageCached WHERE id = :id")
     fun getFeedImage(id: String): Flow<FeedImageCached>
 
-    @Upsert
-    suspend fun saveFeedImage(item: FeedImageCached)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun saveFeedImage(item: FeedImageCached): Long
 
     @Query("DELETE FROM FeedImageCached WHERE id = :id")
     suspend fun deleteFeedImage(id: String)

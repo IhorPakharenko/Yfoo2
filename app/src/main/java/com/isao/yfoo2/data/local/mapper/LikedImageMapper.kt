@@ -14,5 +14,5 @@ fun LikedImageCached.toDomainModel() = LikedImage(
 fun LikedImage.toEntityModel() = LikedImageCached(
     id = id,
     source = source,
-    dateAdded = dateAdded.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    dateAdded = dateAdded.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 )

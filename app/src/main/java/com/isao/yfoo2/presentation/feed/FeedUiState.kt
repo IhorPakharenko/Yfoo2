@@ -9,5 +9,4 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class FeedUiState(
     val items: List<FeedItemDisplayable>,
-    val dismissedItems: List<FeedItemDisplayable>
 ) : Parcelable

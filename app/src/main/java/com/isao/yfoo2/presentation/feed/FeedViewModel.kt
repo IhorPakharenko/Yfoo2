@@ -2,28 +2,25 @@ package com.isao.yfoo2.presentation.feed
 
 import androidx.lifecycle.SavedStateHandle
 import com.isao.yfoo2.core.BaseViewModel
-import com.isao.yfoo2.domain.usecase.AddRandomFeedImageUseCase
+import com.isao.yfoo2.domain.usecase.DeleteFeedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
 import com.isao.yfoo2.domain.usecase.LikeImageUseCase
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-
-private const val MIN_ITEM_COUNT = 20
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val likeImageUseCase: LikeImageUseCase,
-    private val addRandomFeedImageUseCase: AddRandomFeedImageUseCase,
+    private val deleteFeedImageUseCase: DeleteFeedImageUseCase,
     getFeedImagesUseCase: GetFeedImagesUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<FeedUiState, FeedPartialState, Nothing, FeedIntent>(
     savedStateHandle,
-    FeedUiState(items = emptyList(), dismissedItems = emptyList())
+    FeedUiState(items = emptyList())
 ) {
     init {
         observeContinuousChanges(
@@ -52,21 +49,21 @@ class FeedViewModel @Inject constructor(
         partialState: FeedPartialState
     ): FeedUiState = when (partialState) {
         //TODO are these partial states needed if they don't change the state?
-        is FeedPartialState.SavingItem -> previousState.copy(
-            items = previousState.items - partialState.item,
-            dismissedItems = previousState.dismissedItems + partialState.item
-        )
-
         is FeedPartialState.ItemSaved -> previousState
         is FeedPartialState.ErrorSavingItem -> previousState
-        //TODO bugs when multiple items are the equal
+        is FeedPartialState.ErrorDeletingItem -> previousState
         is FeedPartialState.ItemDismissed -> previousState.copy(
-            items = previousState.items - partialState.item,
-            dismissedItems = previousState.dismissedItems + partialState.item
+            items = previousState.items.map { item ->
+                if (item.id == partialState.item.id) {
+                    item.copy(isDismissed = true)
+                } else {
+                    item
+                }
+            },
         )
 
         is FeedPartialState.ItemsFetched -> previousState.copy(
-            items = previousState.items + partialState.items
+            items = (previousState.items + partialState.items).distinctBy { it.id }
         )
 
         is FeedPartialState.ErrorFetchingItem -> previousState
@@ -74,7 +71,7 @@ class FeedViewModel @Inject constructor(
 
     private fun likeItem(id: String): Flow<FeedPartialState> = flow {
         val item = uiState.value.items.first { it.id == id }
-        emit(FeedPartialState.SavingItem(item))
+        emit(FeedPartialState.ItemDismissed(item))
         likeImageUseCase(id)
             .onSuccess {
                 emit(FeedPartialState.ItemSaved(item))
@@ -85,8 +82,13 @@ class FeedViewModel @Inject constructor(
             }
     }
 
-    private fun dislikeItem(id: String): Flow<FeedPartialState> {
+    private fun dislikeItem(id: String): Flow<FeedPartialState> = flow {
         val item = uiState.value.items.first { it.id == id }
-        return flowOf(FeedPartialState.ItemDismissed(item))
+        emit(FeedPartialState.ItemDismissed(item))
+        deleteFeedImageUseCase(id)
+            .onFailure {
+                //TODO show error
+                emit(FeedPartialState.ErrorDeletingItem(it))
+            }
     }
 }
