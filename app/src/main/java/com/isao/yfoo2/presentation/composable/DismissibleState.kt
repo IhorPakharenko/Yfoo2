@@ -64,9 +64,16 @@ class DismissibleState(
     val endY = getEndY(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
 
     //TODO derivedStateOf here is likely meaningless
+    /**
+     * Not coerced by directions
+     */
     val horizontalDismissProgress by derivedStateOf {
         offset.value.x / containerWidth
     }
+
+    /**
+     * Not coerced by directions
+     */
     val verticalDismissProgress by derivedStateOf {
         offset.value.y / containerHeight
     }

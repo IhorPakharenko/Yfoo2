@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -27,7 +28,6 @@ fun Modifier.dismissible(
             onDragStart = { velocityTracker.resetTracking() },
             onDragEnd = {
                 launch {
-                    //TODO ignores allowedDirections
                     val coercedOffset = state.offset.targetValue.coerceIn(
                         allowedDirections = directions,
                         maxWidth = state.containerWidth,
@@ -35,12 +35,19 @@ fun Modifier.dismissible(
                     )
                     val canDismissDueToPosition = canDismiss(
                         coercedOffset,
-                        state.horizontalDismissProgress,
-                        state.verticalDismissProgress
+                        coercedOffset.x / state.containerWidth,
+                        coercedOffset.y / state.containerHeight,
                     )
-                    val velocity = velocityTracker.calculateVelocity()
+
+                    val coercedVelocity = velocityTracker.calculateVelocity().coerceIn(
+                        allowedDirections = directions,
+                        maxWidth = state.containerWidth,
+                        maxHeight = state.containerHeight
+                    )
                     val canDismissDueToVelocity =
-                        velocity.x > state.dismissVelocity || velocity.y > state.dismissVelocity
+                        coercedVelocity.x > state.dismissVelocity
+                                || coercedVelocity.y > state.dismissVelocity
+
                     if (canDismissDueToPosition || canDismissDueToVelocity) {
                         val horizontalDismissProgress = state.horizontalDismissProgress
                         val verticalDismissProgress = state.verticalDismissProgress
@@ -86,12 +93,31 @@ private fun Offset.coerceIn(
     maxWidth: Float,
     maxHeight: Float,
 ): Offset = copy(
-    x = x.coerceIn(
-        if (allowedDirections.contains(Direction.Start)) -maxWidth else 0f,
-        if (allowedDirections.contains(Direction.End)) maxWidth else 0f
-    ),
-    y = y.coerceIn(
-        if (allowedDirections.contains(Direction.Up)) -maxHeight else 0f,
-        if (allowedDirections.contains(Direction.Down)) maxHeight else 0f,
-    )
+    x = x.coerceWidthIn(allowedDirections, maxWidth),
+    y = y.coerceHeightIn(allowedDirections, maxHeight)
+)
+
+private fun Velocity.coerceIn(
+    allowedDirections: Array<Direction>,
+    maxWidth: Float,
+    maxHeight: Float,
+): Velocity = copy(
+    x = x.coerceWidthIn(allowedDirections, maxWidth),
+    y = y.coerceHeightIn(allowedDirections, maxHeight)
+)
+
+private fun Float.coerceWidthIn(
+    allowedDirections: Array<Direction>,
+    maxWidth: Float,
+): Float = coerceIn(
+    if (allowedDirections.contains(Direction.Start)) -maxWidth else 0f,
+    if (allowedDirections.contains(Direction.End)) maxWidth else 0f
+)
+
+private fun Float.coerceHeightIn(
+    allowedDirections: Array<Direction>,
+    maxHeight: Float,
+): Float = coerceIn(
+    if (allowedDirections.contains(Direction.Up)) -maxHeight else 0f,
+    if (allowedDirections.contains(Direction.Down)) maxHeight else 0f,
 )
