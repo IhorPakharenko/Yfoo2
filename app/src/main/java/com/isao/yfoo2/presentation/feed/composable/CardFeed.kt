@@ -1,8 +1,7 @@
 package com.isao.yfoo2.presentation.feed.composable
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -12,14 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,11 +32,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.extensions.scale
 import com.isao.yfoo2.presentation.composable.Direction
-import com.isao.yfoo2.presentation.composable.DismissibleState
 import com.isao.yfoo2.presentation.composable.dismissible
 import com.isao.yfoo2.presentation.composable.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
@@ -70,7 +66,6 @@ fun CardFeed(
                         else -> throw IllegalArgumentException()
                     }
                 )
-//                dismissedItems.add(topItem!!)
                 scope.launch {
                     reset(null)
                 }
@@ -91,7 +86,7 @@ fun CardFeed(
                 )
             ) {
                 WaifuCard(
-                    url = topItem!!.imageUrl,//TODO nullability
+                    url = topItem.imageUrl,//TODO nullability
                     modifier = Modifier.onGloballyPositioned {
 //                        topCardBounds = it.boundsInRoot()
                     }
@@ -99,18 +94,6 @@ fun CardFeed(
             }
         }
 
-//        SwipeableStack(
-//            topItemState = topItemState,
-//            items = items,
-//            dismissedItems = dismissedItems,
-//        ) { item ->
-//            WaifuCard(
-//                url = item,
-//                modifier = Modifier.onGloballyPositioned {
-//                    topCardBounds = it.boundsInRoot()
-//                }
-//            )
-//        }
         val dislikeButtonScale by remember {
             derivedStateOf {
                 getButtonScale(topItemState.horizontalDismissProgress * -1)
@@ -178,24 +161,21 @@ private fun FeedButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    IconButton(
+    OutlinedButton(
         onClick = onClick,
-        modifier = modifier
-            .border(
-                width = 2.dp,
-                color = Color.White,
-                shape = CircleShape
-            )
-            .background(
-                color = Color.Black.copy(alpha = 0.3f),
-                shape = CircleShape
-            )
-            .size(80.dp),
+        modifier = modifier.size(80.dp),
         enabled = enabled,
+        shape = CircleShape,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Black.copy(alpha = 0.3f),
+            contentColor = Color.White,
+        ),
+        border = BorderStroke(
+            width = 2.dp,
+            color = Color.White,
+        )
     ) {
-        CompositionLocalProvider(LocalContentColor provides Color.White) {
-            content()
-        }
+        content()
     }
 }
 
@@ -217,18 +197,6 @@ private fun LikeIcon(modifier: Modifier = Modifier) {
         modifier = modifier.size(32.dp),
         tint = Color.White
     )
-}
-
-//TODO this composable is kind of useless now, consider removing
-@Composable
-fun <T : Any> SwipeableStack(
-    topItemState: DismissibleState,
-    items: LazyPagingItems<T>,
-    dismissedItems: MutableList<T>, //TODO avoid using MutableList
-    modifier: Modifier = Modifier,
-    content: @Composable (T) -> Unit
-) = Box(modifier) {
-
 }
 
 private fun getButtonScale(dismissProgress: Float): Float {
