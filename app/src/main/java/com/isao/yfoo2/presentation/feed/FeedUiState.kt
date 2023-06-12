@@ -2,7 +2,7 @@ package com.isao.yfoo2.presentation.feed
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import com.isao.yfoo2.presentation.model.FeedItemDisplayable
+import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 import kotlinx.parcelize.Parcelize
 
 @Immutable

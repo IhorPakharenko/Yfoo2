@@ -1,6 +1,6 @@
 package com.isao.yfoo2.presentation.feed
 
-import com.isao.yfoo2.presentation.model.FeedItemDisplayable
+import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 
 sealed class FeedPartialState {
 

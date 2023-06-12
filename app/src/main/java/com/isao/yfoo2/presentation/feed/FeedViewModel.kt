@@ -5,7 +5,7 @@ import com.isao.yfoo2.core.BaseViewModel
 import com.isao.yfoo2.domain.usecase.DeleteFeedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
 import com.isao.yfoo2.domain.usecase.LikeImageUseCase
-import com.isao.yfoo2.presentation.mapper.toPresentationModel
+import com.isao.yfoo2.presentation.feed.mapper.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -1,7 +1,7 @@
-package com.isao.yfoo2.presentation.mapper
+package com.isao.yfoo2.presentation.feed.mapper
 
 import com.isao.yfoo2.domain.model.FeedImage
-import com.isao.yfoo2.presentation.model.FeedItemDisplayable
+import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 
 fun FeedImage.toPresentationModel() = FeedItemDisplayable(
     id = id,

@@ -1,4 +1,4 @@
-package com.isao.yfoo2.presentation.model
+package com.isao.yfoo2.presentation.feed.model
 
 import android.os.Parcelable
 import com.isao.yfoo2.domain.model.ImageSource

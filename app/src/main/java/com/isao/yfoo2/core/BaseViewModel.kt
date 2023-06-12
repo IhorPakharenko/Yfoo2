@@ -20,6 +20,7 @@ import timber.log.Timber
 
 private const val SAVED_UI_STATE_KEY = "savedUiStateKey"
 
+//TODO rename to MviViewModel?
 abstract class BaseViewModel<UI_STATE : Parcelable, PARTIAL_UI_STATE, EVENT, INTENT>(
     savedStateHandle: SavedStateHandle,
     initialState: UI_STATE,
