@@ -8,7 +8,10 @@ import com.isao.yfoo2.domain.model.ImageSource
 @Entity
 data class FeedImageCached(
     @PrimaryKey
+    @ColumnInfo(name = "id")
     val id: String,
+    @ColumnInfo(name = "imageId")
+    val imageId: String,
     @ColumnInfo(name = "source")
     val source: ImageSource
 )

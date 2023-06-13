@@ -7,16 +7,19 @@ import java.time.Instant
 
 fun FeedImageCached.toDomainModel() = FeedImage(
     id = id,
+    imageId = imageId,
     source = source
 )
 
 fun FeedImage.toEntityModel() = FeedImageCached(
     id = id,
+    imageId = imageId,
     source = source,
 )
 
 fun FeedImage.toLikedImage() = LikedImage(
     id = id,
+    imageId = imageId,
     source = source,
     dateAdded = Instant.now()
 )

@@ -1,5 +1,6 @@
 package com.isao.yfoo2.presentation.liked.composable
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -127,9 +128,7 @@ fun ItemsAvailableContent(
             }
             items(
                 uiState.items,
-                key = {
-                    it.id
-                }
+                key = { it.id }
             ) { item ->
                 LikedItem(
                     item = item,

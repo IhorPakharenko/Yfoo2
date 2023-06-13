@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class FeedItemDisplayable(
     val id: String,
+    val imageId: String,
     val source: ImageSource,
     val imageUrl: String,
     val sourceUrl: String,

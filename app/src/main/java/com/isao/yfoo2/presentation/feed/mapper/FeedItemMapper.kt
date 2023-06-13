@@ -5,8 +5,9 @@ import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 
 fun FeedImage.toPresentationModel() = FeedItemDisplayable(
     id = id,
+    imageId = imageId,
     source = source,
-    imageUrl = source.getImageUrl(id),
+    imageUrl = source.getImageUrl(imageId),
     sourceUrl = source.websiteUrl,
     isDismissed = false
 )

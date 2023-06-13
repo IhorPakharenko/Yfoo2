@@ -31,9 +31,12 @@ class FeedImageRepositoryImpl @Inject constructor(
     override suspend fun addRandomFeedImage() {
         var insertedRowId: Long
         do {
+            val imageId = Random.nextInt(100000 + 1).toString()
+            val source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
             insertedRowId = feedImageDao.saveFeedImage(
                 FeedImage(
-                    id = Random.nextInt(100000 + 1).toString(),
+                    id = "${source}_$imageId",
+                    imageId = Random.nextInt(100000 + 1).toString(),
                     source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
                 ).toEntityModel()
             )

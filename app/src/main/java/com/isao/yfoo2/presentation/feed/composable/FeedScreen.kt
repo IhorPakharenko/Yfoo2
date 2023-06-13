@@ -52,6 +52,7 @@ fun FeedScreen(
             topCardBounds?.overlaps(topAppBarBounds ?: return@derivedStateOf false) == true
         }
     }
+    //TODO move the card above the app bar
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title = {
@@ -75,31 +76,6 @@ fun FeedScreen(
                 onIntent
             )
             //TODO loading and errors
-//            val pager = remember {
-//                Pager(PagingConfig(pageSize = 10)) {
-//                    RandomWaifuPagingSource()
-//                }
-//            }
-//
-////            val dismissedItems = remember { mutableStateListOf<String>() }
-//            val items = pager.flow.collectAsLazyPagingItems()
-//            when (items.loadState.refresh) {
-//                LoadState.Loading -> {
-//                    Box {
-//                        CircularProgressIndicator()
-//                    }
-//                }
-//
-//                is LoadState.Error -> {
-//                    Box {
-//                        Text(text = "Oops!")
-//                    }
-//                }
-//
-//                else -> {
-//                    CardFeed()
-//                }
-//            }
         }
     }
 }

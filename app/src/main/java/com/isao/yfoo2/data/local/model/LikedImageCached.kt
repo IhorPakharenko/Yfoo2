@@ -9,7 +9,10 @@ import java.time.Instant
 @Entity
 data class LikedImageCached(
     @PrimaryKey
+    @ColumnInfo(name = "id")
     val id: String,
+    @ColumnInfo(name = "imageId")
+    val imageId: String,
     @ColumnInfo(name = "source")
     val source: ImageSource,
     @ColumnInfo(name = "dateAdded")

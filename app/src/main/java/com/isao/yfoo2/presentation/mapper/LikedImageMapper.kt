@@ -5,8 +5,6 @@ import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 
 fun LikedImage.toPresentationModel() = LikedImageDisplayable(
     id = id,
-    source = source,
-    imageUrl = source.getImageUrl(id),
-    sourceUrl = source.websiteUrl,
-    dateAdded = dateAdded
+    imageUrl = source.getImageUrl(imageId),
+    sourceUrl = source.websiteUrl
 )
