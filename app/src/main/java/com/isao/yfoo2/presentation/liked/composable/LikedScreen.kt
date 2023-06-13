@@ -84,29 +84,22 @@ fun LikedScreen(
             )
         }
     ) { padding ->
-        if (uiState.isLoading) {
-            LoadingPlaceholder()
-            return@Scaffold
+        //TODO using uiState here will probably lead to a ton of unneeded recompositions
+        Crossfade(uiState) { uiState ->
+            when {
+                uiState.isLoading -> LoadingPlaceholder()
+                uiState.isError -> ErrorPlaceholder()
+                uiState.items.isEmpty() -> NoItemsPlaceholder()
+                else -> ItemsAvailableContent(
+                    uiState = uiState,
+                    onIntent = onIntent,
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                )
+            }
         }
-
-        if (uiState.isError) {
-            ErrorPlaceholder()
-            return@Scaffold
-        }
-
-        if (uiState.items.isEmpty()) {
-            NoItemsPlaceholder()
-            return@Scaffold
-        }
-
-        ItemsAvailableContent(
-            uiState = uiState,
-            onIntent = onIntent,
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-        )
     }
 }
 
@@ -172,6 +165,7 @@ private fun ErrorPlaceholder(modifier: Modifier = Modifier) {
         modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        //TODO dark mode
         Text(
             stringResource(R.string.something_went_wrong),
             color = Color.Red,
