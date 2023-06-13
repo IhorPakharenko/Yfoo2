@@ -4,4 +4,7 @@
     <string name="liked">Liked</string>
     <string name="like">Like</string>
     <string name="nope">Nope</string>
+    <string name="nothing_is_there_yet">Nothing is there yet!</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="added">Added</string>
 </resources>

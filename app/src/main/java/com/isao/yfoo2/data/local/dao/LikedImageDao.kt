@@ -12,13 +12,19 @@ interface LikedImageDao {
     @Query("SELECT * FROM LikedImageCached")
     fun getLikedImages(): Flow<List<LikedImageCached>>
 
-//    @Query("""
-//        SELECT * FROM LikedImageCached ORDER BY
-//        CASE WHEN :sortAscending = 1 THEN ID END ASC,
-//        CASE WHEN :sortAscending = 0 THEN ID END DESC
-//        LIMIT :limit OFFSET :offset
-//        """)
-//    fun getLikedImages(sortAscending: Boolean, limit: Int, offset: Int)
+    @Query(
+        """
+        SELECT * FROM LikedImageCached ORDER BY
+        CASE WHEN :shouldSortAscending = 1 THEN dateAdded END ASC,
+        CASE WHEN :shouldSortAscending = 0 THEN dateAdded END DESC
+        LIMIT :limit OFFSET :offset
+        """
+    )
+    fun getLikedImages(
+        shouldSortAscending: Boolean,
+        limit: Int,
+        offset: Int
+    ): Flow<List<LikedImageCached>>
 
     @Upsert
     suspend fun saveLikedImage(item: LikedImageCached)

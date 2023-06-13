@@ -4,9 +4,11 @@ import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 
 sealed class LikedPartialState {
 
-    data class ItemsFetched(val items: List<LikedImageDisplayable>)
+    data class Fetched(val items: List<LikedImageDisplayable>) : LikedPartialState()
 
     data class Error(val throwable: Throwable) : LikedPartialState()
 
     object Loading : LikedPartialState()
+
+    data class Sorted(val shouldSortAscending: Boolean) : LikedPartialState()
 }

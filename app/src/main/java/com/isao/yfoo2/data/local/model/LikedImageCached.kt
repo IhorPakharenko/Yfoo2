@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.isao.yfoo2.domain.model.ImageSource
+import java.time.Instant
 
 @Entity
 data class LikedImageCached(
@@ -12,5 +13,5 @@ data class LikedImageCached(
     @ColumnInfo(name = "source")
     val source: ImageSource,
     @ColumnInfo(name = "dateAdded")
-    val dateAdded: String
+    val dateAdded: Instant
 )

@@ -4,7 +4,9 @@ import com.isao.yfoo2.domain.model.LikedImage
 import kotlinx.coroutines.flow.Flow
 
 interface LikedImageRepository {
-    suspend fun getImages(): Flow<List<LikedImage>>
+    fun getImages(): Flow<List<LikedImage>>
+
+    fun getImages(shouldSortAscending: Boolean, limit: Int, offset: Int): Flow<List<LikedImage>>
 
     suspend fun saveImage(item: LikedImage)
 

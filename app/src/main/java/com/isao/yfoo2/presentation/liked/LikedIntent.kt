@@ -4,7 +4,7 @@ import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 
 sealed class LikedIntent {
 
-    object GetImages : LikedIntent()
+    data class SetSorting(val shouldSortAscending: Boolean) : LikedIntent()
 
     data class ImageClicked(val item: LikedImageDisplayable) : LikedIntent()
 

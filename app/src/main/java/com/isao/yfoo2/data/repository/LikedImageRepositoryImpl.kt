@@ -13,10 +13,21 @@ class LikedImageRepositoryImpl @Inject constructor(
     private val likedImageDao: LikedImageDao,
 ) : LikedImageRepository {
 
-    override suspend fun getImages(): Flow<List<LikedImage>> {
+    override fun getImages(): Flow<List<LikedImage>> {
         return likedImageDao.getLikedImages().map { imagesCached ->
             imagesCached.map { it.toDomainModel() }
         }
+    }
+
+    override fun getImages(
+        shouldSortAscending: Boolean,
+        limit: Int,
+        offset: Int
+    ): Flow<List<LikedImage>> {
+        return likedImageDao.getLikedImages(shouldSortAscending, limit, offset)
+            .map { imagesCached ->
+                imagesCached.map { it.toDomainModel() }
+            }
     }
 
     override suspend fun saveImage(item: LikedImage) {
