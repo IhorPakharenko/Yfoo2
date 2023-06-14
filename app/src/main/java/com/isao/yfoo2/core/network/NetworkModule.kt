@@ -15,7 +15,9 @@ import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
 
-//TODO might not be needed at all
+/**
+ * Currently not used. Left in case it is ever needed.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 internal object NetworkModule {
@@ -57,7 +59,7 @@ internal object NetworkModule {
         }
         val contentType = "application/json".toMediaType()
 
-        //TODO consider providing a base url
+        //TODO provide a base url
         return Retrofit
             .Builder()
             .addConverterFactory(json.asConverterFactory(contentType))

@@ -1,7 +1,7 @@
 package com.isao.yfoo2.presentation.liked
 
 import androidx.lifecycle.SavedStateHandle
-import com.isao.yfoo2.core.BaseViewModel
+import com.isao.yfoo2.core.MviViewModel
 import com.isao.yfoo2.domain.usecase.GetLikedImagesUseCase
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
 import com.isao.yfoo2.presentation.model.LikedImageDisplayable
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class LikedViewModel @Inject constructor(
     private val getLikedImagesUseCase: GetLikedImagesUseCase,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel<LikedUiState, LikedPartialState, LikedEvent, LikedIntent>(
+) : MviViewModel<LikedUiState, LikedPartialState, LikedEvent, LikedIntent>(
     savedStateHandle,
     LikedUiState(
         items = emptyList(),

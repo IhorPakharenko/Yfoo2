@@ -8,17 +8,29 @@ import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.domain.repository.FeedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
-import kotlin.random.Random
 
 class FeedImageRepositoryImpl @Inject constructor(
     private val feedImageDao: FeedImageDao,
 ) : FeedImageRepository {
 
+    companion object {
+        const val MIN_ITEM_COUNT = 20
+    }
+
     override fun getImages(): Flow<List<FeedImage>> {
-        return feedImageDao.getFeedImages().map { imagesCached ->
-            imagesCached.map { it.toDomainModel() }
-        }
+        return feedImageDao
+            .getFeedImages()
+            .map { imagesCached ->
+                imagesCached.map { it.toDomainModel() }
+            }
+            .onEach { items ->
+                val itemsToFetchCount = MIN_ITEM_COUNT - items.size
+                repeat(itemsToFetchCount) {
+                    addRandomFeedImage()
+                }
+            }
     }
 
     override fun getImage(id: String): Flow<FeedImage> {
@@ -31,13 +43,16 @@ class FeedImageRepositoryImpl @Inject constructor(
     override suspend fun addRandomFeedImage() {
         var insertedRowId: Long
         do {
-            val imageId = Random.nextInt(100000 + 1).toString()
+            // Currently it is the only source supported in the app as
+            // thishorsedoesnotexist.com and thiscatdoesnotexist.com are both down
+            // and all other options are boring
             val source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
+            val imageId = source.getRandomImageId()
             insertedRowId = feedImageDao.saveFeedImage(
                 FeedImage(
                     id = "${source}_$imageId",
-                    imageId = Random.nextInt(100000 + 1).toString(),
-                    source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
+                    imageId = imageId,
+                    source = source
                 ).toEntityModel()
             )
         } while (insertedRowId == -1L)

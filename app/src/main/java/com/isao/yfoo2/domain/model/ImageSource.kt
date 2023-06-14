@@ -1,5 +1,7 @@
 package com.isao.yfoo2.domain.model
 
+import kotlin.random.Random
+
 enum class ImageSource {
     THIS_WAIFU_DOES_NOT_EXIST;
 
@@ -12,5 +14,9 @@ enum class ImageSource {
         THIS_WAIFU_DOES_NOT_EXIST -> {
             "https://www.thiswaifudoesnotexist.net/example-$id.jpg"
         }
+    }
+
+    fun getRandomImageId() = when (this) {
+        THIS_WAIFU_DOES_NOT_EXIST -> Random.nextInt(100000 + 1).toString()
     }
 }
