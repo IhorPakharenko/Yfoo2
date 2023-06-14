@@ -54,7 +54,7 @@ class DismissibleState(
     val containerHeight: Float,
     val maxRotationZ: Float,
     val dismissVelocity: Float,
-    private val layoutDirection: LayoutDirection,
+    val layoutDirection: LayoutDirection,
     val onDismiss: DismissibleState.(Direction) -> Unit,
     val onDismissCancel: () -> Unit
 ) {
@@ -68,7 +68,7 @@ class DismissibleState(
      * Not coerced by directions
      */
     val horizontalDismissProgress by derivedStateOf {
-        offset.value.x / containerWidth
+        offset.value.x / containerWidth * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
     }
 
     /**
@@ -79,7 +79,7 @@ class DismissibleState(
     }
 
     val rotationZ by derivedStateOf {
-        maxRotationZ * horizontalDismissProgress
+        maxRotationZ * offset.value.x / containerWidth
     }
 
     /**

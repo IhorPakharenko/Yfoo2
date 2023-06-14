@@ -144,6 +144,8 @@ fun ItemsAvailableContent(
     )
 }
 
+//TODO edge to edge layouts
+//TODO add previews
 @Composable
 private fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
     Box(

@@ -7,19 +7,19 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 
-//TODO support rtl
 //TODO decide which parameters go to state and which go here
 fun Modifier.dismissible(
     state: DismissibleState,
     directions: Array<Direction> = Direction.values(), //TODO replace with immutable list
-    minHorizontalProgressToDismiss: Float = 0.5f,
-    minVerticalProgressToDismiss: Float = 0.5f,
+    minHorizontalProgressToDismiss: Float = 0.7f,
+    minVerticalProgressToDismiss: Float = 0.7f,
 ) = pointerInput(Unit) {
     check(minHorizontalProgressToDismiss > 0f && minHorizontalProgressToDismiss <= 1) {
         "minHorizontalProgressToDismiss must be greater than 0 and less than or equal to 1"
@@ -34,27 +34,32 @@ fun Modifier.dismissible(
             onDragStart = { velocityTracker.resetTracking() },
             onDragEnd = {
                 launch {
+                    val directionMultiplier =
+                        if (state.layoutDirection == LayoutDirection.Rtl) -1 else 1
                     val coercedVelocity = velocityTracker.calculateVelocity().coerceIn(
                         allowedDirections = directions
                     )
-                    //TODO coercing to maxWidth and maxHeight might be pointless
+                    val dismissDirectionDueToVelocity = getDismissDirection(
+                        valueX = coercedVelocity.x * directionMultiplier,
+                        valueY = coercedVelocity.y,
+                        minValueX = state.dismissVelocity,
+                        minValueY = state.dismissVelocity,
+                    )
+
                     val coercedOffset = state.offset.targetValue.coerceIn(
                         allowedDirections = directions,
                         maxWidth = state.containerWidth,
                         maxHeight = state.containerHeight
                     )
+                    val dismissDirectionDueToOffset = getDismissDirection(
+                        valueX = coercedOffset.x * directionMultiplier,
+                        valueY = coercedOffset.y,
+                        minValueX = state.containerWidth * minHorizontalProgressToDismiss,
+                        minValueY = state.containerHeight * minVerticalProgressToDismiss,
+                    )
+
                     val dismissDirection: Direction? =
-                        getDismissDirection(
-                            valueX = coercedVelocity.x,
-                            valueY = coercedVelocity.y,
-                            minValueX = state.dismissVelocity,
-                            minValueY = state.dismissVelocity
-                        ) ?: getDismissDirection(
-                            valueX = coercedOffset.x,
-                            valueY = coercedOffset.y,
-                            minValueX = state.containerWidth,
-                            minValueY = state.containerHeight
-                        )
+                        dismissDirectionDueToVelocity ?: dismissDirectionDueToOffset
                     if (dismissDirection != null) {
                         state.dismiss(dismissDirection)
                     } else {
@@ -119,7 +124,11 @@ private fun Float.coerceHeightIn(
     if (allowedDirections.contains(Direction.Down)) maxHeight else 0f,
 )
 
-//TODO add comments
+/**
+ * Finds the direction depending on which value is closest to its corresponding minValue
+ * @return The direction of the dismiss action
+ * or null if not the conditions for the dismiss have not been met
+ */
 private fun getDismissDirection(
     valueX: Float,
     valueY: Float,
