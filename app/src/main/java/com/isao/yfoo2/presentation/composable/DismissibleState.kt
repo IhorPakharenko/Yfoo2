@@ -2,7 +2,9 @@ package com.isao.yfoo2.presentation.composable
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -35,7 +37,7 @@ fun rememberDismissibleState(
     val layoutDirection = LocalLayoutDirection.current
     val onDismissState = rememberUpdatedState(onDismiss)
     val onDismissCancelState = rememberUpdatedState(onDismissCancel)
-    return remember {
+    return remember { //TODO use rememberSaveable
         DismissibleState(
             containerWidthPx,
             containerHeightPx,
@@ -90,7 +92,12 @@ class DismissibleState(
     var dismissedDirection: Direction? by mutableStateOf(null)
         private set
 
-    internal suspend fun reset(animationSpec: AnimationSpec<Offset>? = tween(400)) {
+    internal suspend fun reset(
+        animationSpec: AnimationSpec<Offset>? = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    ) {
         dismissedDirection = null
         if (animationSpec != null) {
             offset.animateTo(Offset.Zero, animationSpec)
