@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,7 +84,10 @@ fun LikedScreen(
                 },
                 scrollBehavior = scrollBehavior
             )
-        }
+        },
+        // Let the content take up all available space.
+        // Material3 components handle the insets themselves
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         //TODO using uiState here will probably lead to a ton of unneeded recompositions
         Crossfade(uiState) { uiState ->
@@ -144,7 +148,6 @@ fun ItemsAvailableContent(
     )
 }
 
-//TODO edge to edge layouts
 //TODO add previews
 @Composable
 private fun NoItemsPlaceholder(modifier: Modifier = Modifier) {

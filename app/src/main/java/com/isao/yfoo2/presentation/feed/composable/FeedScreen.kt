@@ -1,6 +1,7 @@
 package com.isao.yfoo2.presentation.feed.composable
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -69,7 +70,11 @@ fun FeedScreen(
                 TopAppBarDefaults.centerAlignedTopAppBarColors()
             }
         )
-    }) { padding ->
+    },
+        // Let the content take up all available space.
+        // Material3 components handle the insets themselves
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { padding ->
         Box(modifier.padding(padding)) {
             CardFeed(
                 uiState,
