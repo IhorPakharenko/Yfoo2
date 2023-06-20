@@ -93,4 +93,14 @@ class BorderCropTransformation(
 
         return red > borderColorThreshold || green > borderColorThreshold || blue > borderColorThreshold
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is BorderCropTransformation &&
+                borderColorThreshold == other.borderColorThreshold
+    }
+
+    override fun hashCode(): Int {
+        return borderColorThreshold.hashCode()
+    }
 }
