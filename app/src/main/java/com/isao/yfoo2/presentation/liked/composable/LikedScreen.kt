@@ -69,6 +69,18 @@ private fun HandleEvents(events: Flow<LikedEvent>) {
     }
 }
 
+private enum class ScreenContent {
+    ITEMS, NO_ITEMS, LOADING, ERROR
+}
+
+private val LikedUiState.screenContent
+    get() = when {
+        isLoading -> ScreenContent.LOADING
+        isError -> ScreenContent.ERROR
+        items.isEmpty() -> ScreenContent.NO_ITEMS
+        else -> ScreenContent.ITEMS
+    }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LikedScreen(
@@ -93,13 +105,12 @@ fun LikedScreen(
         // Material3 components handle the insets themselves
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-        //TODO using uiState here will probably lead to a ton of unneeded recompositions
-        Crossfade(uiState) { uiState ->
-            when {
-                uiState.isLoading -> LoadingPlaceholder()
-                uiState.isError -> ErrorPlaceholder()
-                uiState.items.isEmpty() -> NoItemsPlaceholder()
-                else -> ItemsAvailableContent(
+        Crossfade(uiState.screenContent) { screenContent ->
+            when (screenContent) {
+                ScreenContent.LOADING -> LoadingPlaceholder()
+                ScreenContent.ERROR -> ErrorPlaceholder()
+                ScreenContent.NO_ITEMS -> NoItemsPlaceholder()
+                ScreenContent.ITEMS -> ItemsAvailableContent(
                     uiState = uiState,
                     onIntent = onIntent,
                     modifier = Modifier
