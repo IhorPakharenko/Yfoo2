@@ -8,5 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 @Parcelize
 data class FeedUiState(
-    val items: List<FeedItemDisplayable>,
+    val items: List<FeedItemDisplayable> = emptyList(),
+    val isLoading: Boolean = false,
+    val isError: Boolean = false
 ) : Parcelable

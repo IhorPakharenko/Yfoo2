@@ -1,4 +1,4 @@
-package com.isao.yfoo2.core.utils
+package com.isao.yfoo2.core.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

@@ -1,4 +1,4 @@
-package com.isao.yfoo2.core.utils
+package com.isao.yfoo2.core.extensions
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException

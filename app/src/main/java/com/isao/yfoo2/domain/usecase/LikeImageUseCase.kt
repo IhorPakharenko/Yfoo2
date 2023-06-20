@@ -1,6 +1,6 @@
 package com.isao.yfoo2.domain.usecase
 
-import com.isao.yfoo2.core.utils.resultOf
+import com.isao.yfoo2.core.extensions.resultOf
 import com.isao.yfoo2.data.local.mapper.toLikedImage
 import com.isao.yfoo2.domain.repository.FeedImageRepository
 import com.isao.yfoo2.domain.repository.LikedImageRepository

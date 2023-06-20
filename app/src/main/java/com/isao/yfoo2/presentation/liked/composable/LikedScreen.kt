@@ -2,6 +2,7 @@ package com.isao.yfoo2.presentation.liked.composable
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -25,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -35,11 +36,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo2.R
-import com.isao.yfoo2.core.utils.collectWithLifecycle
+import com.isao.yfoo2.core.extensions.collectWithLifecycle
+import com.isao.yfoo2.core.theme.Yfoo2Theme
+import com.isao.yfoo2.core.utils.DevicePreviews
 import com.isao.yfoo2.presentation.liked.LikedEvent
 import com.isao.yfoo2.presentation.liked.LikedIntent
 import com.isao.yfoo2.presentation.liked.LikedUiState
 import com.isao.yfoo2.presentation.liked.LikedViewModel
+import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -113,7 +117,6 @@ fun LikedScreen(
 fun ItemsAvailableContent(
     uiState: LikedUiState,
     onIntent: (LikedIntent) -> Unit,
-
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -148,16 +151,17 @@ fun ItemsAvailableContent(
     )
 }
 
-//TODO add previews
 @Composable
 private fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
     Box(
-        modifier.fillMaxSize(),
+        modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Text(
             stringResource(R.string.nothing_is_there_yet),
-            fontSize = 28.sp,
+            style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
     }
@@ -166,13 +170,14 @@ private fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
 @Composable
 private fun ErrorPlaceholder(modifier: Modifier = Modifier) {
     Box(
-        modifier.fillMaxSize(),
+        modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.errorContainer),
         contentAlignment = Alignment.Center
     ) {
-        //TODO dark mode
         Text(
             stringResource(R.string.something_went_wrong),
-            color = Color.Red,
+            color = MaterialTheme.colorScheme.onErrorContainer,
             fontSize = 28.sp,
             textAlign = TextAlign.Center
         )
@@ -182,13 +187,71 @@ private fun ErrorPlaceholder(modifier: Modifier = Modifier) {
 @Composable
 private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
     Box(
-        modifier.fillMaxSize(),
+        modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
             Modifier
                 .padding(16.dp)
                 .requiredSize(40.dp)
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+fun LikedScreenPreview() {
+    Yfoo2Theme {
+        LikedScreen(
+            uiState = LikedUiState(
+                items = List(50) {
+                    LikedImageDisplayable(
+                        id = it.toString(),
+                        imageUrl = "",
+                        sourceUrl = ""
+                    )
+                }
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+fun LikedScreenLoadingPreview() {
+    Yfoo2Theme {
+        LikedScreen(
+            uiState = LikedUiState(
+                isLoading = true
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+fun LikedScreenNoItemsPreview() {
+    Yfoo2Theme {
+        LikedScreen(
+            uiState = LikedUiState(),
+            onIntent = {}
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+fun LikedScreenErrorPreview() {
+    Yfoo2Theme {
+        LikedScreen(
+            uiState = LikedUiState(
+                isError = true,
+            ),
+            onIntent = {}
         )
     }
 }

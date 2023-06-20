@@ -74,19 +74,20 @@ fun CardFeed(
         )
 
         if (backgroundItem != null) {
-            WaifuCard(
+            ImageCard(
                 url = backgroundItem.imageUrl
             )
         }
 
         if (topItem != null) {
             Box(
-                Modifier.dismissible(
-                    state = topItemState,
-                    directions = arrayOf(Direction.Start, Direction.End)
-                )
+                Modifier
+                    .dismissible(
+                        state = topItemState,
+                        directions = arrayOf(Direction.Start, Direction.End)
+                    )
             ) {
-                WaifuCard(
+                ImageCard(
                     url = topItem.imageUrl,//TODO nullability
                     modifier = Modifier.onGloballyPositioned {
 //                        topCardBounds = it.boundsInRoot()
@@ -94,6 +95,16 @@ fun CardFeed(
                 )
             }
         }
+//        else {
+//            //TODO cleanup
+//            Card(
+//                Modifier
+//                    .padding(horizontal = 16.dp, vertical = 32.dp)
+//                    .then(modifier)
+//            ) {
+//                Box(Modifier.placeholder(visible = true, highlight = PlaceholderHighlight.shimmer()))
+//            }
+//        }
 
         val dislikeButtonScale by remember {
             derivedStateOf {

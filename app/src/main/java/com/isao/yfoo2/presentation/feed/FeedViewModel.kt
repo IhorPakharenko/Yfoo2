@@ -10,33 +10,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val likeImageUseCase: LikeImageUseCase,
     private val deleteFeedImageUseCase: DeleteFeedImageUseCase,
-    getFeedImagesUseCase: GetFeedImagesUseCase,
+    private val getFeedImagesUseCase: GetFeedImagesUseCase,
     savedStateHandle: SavedStateHandle,
 ) : MviViewModel<FeedUiState, FeedPartialState, Nothing, FeedIntent>(
     savedStateHandle,
-    FeedUiState(items = emptyList())
+    FeedUiState()
 ) {
     init {
-        observeContinuousChanges(
-            getFeedImagesUseCase().map { result ->
-                result.fold(
-                    onSuccess = { items ->
-                        FeedPartialState.ItemsFetched(
-                            items.map { it.toPresentationModel() }
-                        )
-                    },
-                    onFailure = {
-                        FeedPartialState.ErrorFetchingItem(it)
-                    }
-                )
-            }
-        )
+        observeContinuousChanges(getItems())
     }
 
     override fun mapIntents(intent: FeedIntent): Flow<FeedPartialState> = when (intent) {
@@ -48,9 +36,16 @@ class FeedViewModel @Inject constructor(
         previousState: FeedUiState,
         partialState: FeedPartialState
     ): FeedUiState = when (partialState) {
-        //TODO are these partial states needed if they don't change the state?
-        is FeedPartialState.ErrorSavingItem -> previousState
-        is FeedPartialState.ErrorDeletingItem -> previousState
+        is FeedPartialState.ItemsFetched -> previousState.copy(
+            items = (previousState.items + partialState.items).distinctBy { it.id },
+            isLoading = false,
+            isError = false
+        )
+
+        FeedPartialState.ItemsLoading -> previousState.copy(
+            isLoading = true
+        )
+
         is FeedPartialState.ItemDismissed -> previousState.copy(
             items = previousState.items.map { item ->
                 if (item.id == partialState.item.id) {
@@ -59,22 +54,39 @@ class FeedViewModel @Inject constructor(
                     item
                 }
             },
+            isLoading = false,
+            isError = false
         )
 
-        is FeedPartialState.ItemsFetched -> previousState.copy(
-            items = (previousState.items + partialState.items).distinctBy { it.id }
+        is FeedPartialState.Error -> previousState.copy(
+            isError = true,
         )
-
-        is FeedPartialState.ErrorFetchingItem -> previousState
     }
+
+    private fun getItems(): Flow<FeedPartialState> =
+        getFeedImagesUseCase()
+            .map { result ->
+                result.fold(
+                    onSuccess = { items ->
+                        FeedPartialState.ItemsFetched(
+                            items.map { it.toPresentationModel() }
+                        )
+                    },
+                    onFailure = {
+                        FeedPartialState.Error(it)
+                    }
+                )
+            }
+            .onStart {
+                emit(FeedPartialState.ItemsLoading)
+            }
 
     private fun likeItem(id: String): Flow<FeedPartialState> = flow {
         val item = uiState.value.items.first { it.id == id }
         emit(FeedPartialState.ItemDismissed(item))
         likeImageUseCase(id)
             .onFailure {
-                //TODO show error
-                emit(FeedPartialState.ErrorSavingItem(it))
+                emit(FeedPartialState.Error(it))
             }
     }
 
@@ -83,8 +95,7 @@ class FeedViewModel @Inject constructor(
         emit(FeedPartialState.ItemDismissed(item))
         deleteFeedImageUseCase(id)
             .onFailure {
-                //TODO show error
-                emit(FeedPartialState.ErrorDeletingItem(it))
+                emit(FeedPartialState.Error(it))
             }
     }
 }

@@ -8,8 +8,8 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 @Parcelize
 data class LikedUiState(
-    val items: List<LikedImageDisplayable>,
-    val shouldSortAscending: Boolean,
-    val isLoading: Boolean,
-    val isError: Boolean
+    val items: List<LikedImageDisplayable> = emptyList(),
+    val shouldSortAscending: Boolean = false,
+    val isLoading: Boolean = false,
+    val isError: Boolean = false
 ) : Parcelable
