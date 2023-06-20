@@ -112,6 +112,8 @@ fun LikedScreen(
     }
 }
 
+// Restarting the image request after regaining network connectivity is an open issue
+// in coil since 2019: https://github.com/coil-kt/coil/issues/132
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemsAvailableContent(
@@ -119,8 +121,10 @@ fun ItemsAvailableContent(
     onIntent: (LikedIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val itemSize = 100.dp
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(100.dp),
+        columns = GridCells.Adaptive(itemSize),
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -139,6 +143,8 @@ fun ItemsAvailableContent(
             ) { item ->
                 LikedItem(
                     item = item,
+                    width = itemSize,
+                    height = itemSize,
                     onClick = { onIntent(LikedIntent.ImageClicked(item)) },
                     onLongClick = { onIntent(LikedIntent.ImageLongClicked(item)) },
                     modifier = Modifier
