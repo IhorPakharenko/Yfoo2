@@ -16,7 +16,7 @@ import coil.transform.Transformation
  * Designed specifically for the images from [This Waifu Does Not Exist](https://thiswaifudoesnotexist.net).
  */
 class BorderCropTransformation(
-    private val borderColorThreshold: Int = 60
+    private val borderColorThreshold: Int = 130
 ) : Transformation {
 
     override val cacheKey: String = "${javaClass.name}-$borderColorThreshold"
