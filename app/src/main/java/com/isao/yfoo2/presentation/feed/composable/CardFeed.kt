@@ -53,6 +53,7 @@ fun CardFeed(
 
         val notDismissedItems = uiState.items.filterNot { it.isDismissed }
 
+        val preloadedItem = notDismissedItems.getOrNull(2)
         val backgroundItem = notDismissedItems.getOrNull(1)
         val topItem = notDismissedItems.getOrNull(0)
 
@@ -69,6 +70,12 @@ fun CardFeed(
                     reset(null)
                 }
             }
+        )
+
+        PreloadFeedItem(
+            item = preloadedItem,
+            width = maxWidth,
+            height = maxHeight
         )
 
         if (backgroundItem != null) {
