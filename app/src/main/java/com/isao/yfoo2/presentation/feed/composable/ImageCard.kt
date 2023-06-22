@@ -16,7 +16,7 @@ import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
 
 @Composable
-fun ImageCard(url: String, modifier: Modifier = Modifier) {
+fun ImageCard(url: String?, modifier: Modifier = Modifier) {
     Card(
         Modifier
             .padding(horizontal = 16.dp, vertical = 32.dp)

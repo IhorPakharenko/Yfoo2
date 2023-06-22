@@ -6,6 +6,7 @@ import com.isao.yfoo2.domain.usecase.DeleteFeedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
 import com.isao.yfoo2.domain.usecase.LikeImageUseCase
 import com.isao.yfoo2.presentation.feed.mapper.toPresentationModel
+import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -28,8 +29,8 @@ class FeedViewModel @Inject constructor(
     }
 
     override fun mapIntents(intent: FeedIntent): Flow<FeedPartialState> = when (intent) {
-        is FeedIntent.Like -> likeItem(intent.id)
-        is FeedIntent.Dislike -> dislikeItem(intent.id)
+        is FeedIntent.Like -> likeItem(intent.item)
+        is FeedIntent.Dislike -> dislikeItem(intent.item)
     }
 
     override fun reduceUiState(
@@ -81,19 +82,17 @@ class FeedViewModel @Inject constructor(
                 emit(FeedPartialState.ItemsLoading)
             }
 
-    private fun likeItem(id: String): Flow<FeedPartialState> = flow {
-        val item = uiState.value.items.first { it.id == id }
+    private fun likeItem(item: FeedItemDisplayable): Flow<FeedPartialState> = flow {
         emit(FeedPartialState.ItemDismissed(item))
-        likeImageUseCase(id)
+        likeImageUseCase(item.id)
             .onFailure {
                 emit(FeedPartialState.Error(it))
             }
     }
 
-    private fun dislikeItem(id: String): Flow<FeedPartialState> = flow {
-        val item = uiState.value.items.first { it.id == id }
+    private fun dislikeItem(item: FeedItemDisplayable): Flow<FeedPartialState> = flow {
         emit(FeedPartialState.ItemDismissed(item))
-        deleteFeedImageUseCase(id)
+        deleteFeedImageUseCase(item.id)
             .onFailure {
                 emit(FeedPartialState.Error(it))
             }

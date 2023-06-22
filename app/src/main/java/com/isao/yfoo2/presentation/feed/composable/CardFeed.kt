@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
@@ -42,6 +43,7 @@ import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterialApi
 @Composable
 fun CardFeed(
     uiState: FeedUiState,
@@ -57,13 +59,11 @@ fun CardFeed(
         val topItem = notDismissedItems.getOrNull(0)
 
         val topItemState = rememberDismissibleState(
-            containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
-            containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
             onDismiss = { direction ->
                 onIntent(
                     when (direction) {
-                        Direction.Start -> FeedIntent.Dislike(topItem!!.id) //TODO nullability
-                        Direction.End -> FeedIntent.Like(topItem!!.id) //TODO nullability
+                        Direction.Start -> FeedIntent.Dislike(topItem!!) //TODO nullability
+                        Direction.End -> FeedIntent.Like(topItem!!) //TODO nullability
                         else -> throw IllegalArgumentException()
                     }
                 )
@@ -74,27 +74,26 @@ fun CardFeed(
         )
 
         if (backgroundItem != null) {
+            ImageCard(url = backgroundItem.imageUrl)
+        }
+        Box(
+            Modifier
+                .dismissible(
+                    state = topItemState,
+                    directions = setOf(Direction.Start, Direction.End),
+                    enabled = topItem != null,
+                    containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
+                    containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
+                )
+        ) {
             ImageCard(
-                url = backgroundItem.imageUrl
+                url = topItem?.imageUrl,//TODO nullability
+                modifier = Modifier.onGloballyPositioned {
+//                        topCardBounds = it.boundsInRoot()
+                }
             )
         }
 
-        if (topItem != null) {
-            Box(
-                Modifier
-                    .dismissible(
-                        state = topItemState,
-                        directions = arrayOf(Direction.Start, Direction.End)
-                    )
-            ) {
-                ImageCard(
-                    url = topItem.imageUrl,//TODO nullability
-                    modifier = Modifier.onGloballyPositioned {
-//                        topCardBounds = it.boundsInRoot()
-                    }
-                )
-            }
-        }
 //        else {
 //            //TODO cleanup
 //            Card(

@@ -7,6 +7,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.sin
 
 
@@ -26,11 +29,6 @@ enum class Direction {
 
 @Composable
 fun rememberDismissibleState(
-    containerWidthPx: Float,
-    containerHeightPx: Float,
-    maxRotationZ: Float = 15f,
-    //TODO it's pixels per second so it won't work the same way on different devices
-    dismissVelocity: Float = 400f,
     onDismiss: DismissibleState.(Direction) -> Unit = {},
     onDismissCancel: () -> Unit = {}
 ): DismissibleState {
@@ -39,10 +37,6 @@ fun rememberDismissibleState(
     val onDismissCancelState = rememberUpdatedState(onDismissCancel)
     return remember { //TODO use rememberSaveable
         DismissibleState(
-            containerWidthPx,
-            containerHeightPx,
-            maxRotationZ,
-            dismissVelocity,
             layoutDirection,
             { onDismissState.value.invoke(this, it) },
             { onDismissCancelState.value.invoke() }
@@ -50,38 +44,41 @@ fun rememberDismissibleState(
     }
 }
 
-
+@Stable
 class DismissibleState(
-    val containerWidth: Float,
-    val containerHeight: Float,
-    val maxRotationZ: Float,
-    val dismissVelocity: Float,
-    val layoutDirection: LayoutDirection,
+    private val layoutDirection: LayoutDirection,
     val onDismiss: DismissibleState.(Direction) -> Unit,
     val onDismissCancel: () -> Unit
 ) {
-    val offset = Animatable(Offset.Zero, Offset.VectorConverter)
+    private val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
-    val endX = getEndX(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
-    val endY = getEndY(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
+    internal var directions: Set<Direction> by mutableStateOf(emptySet())
+    internal var containerWidthPx: Float by mutableStateOf(0f)
+    internal var containerHeightPx: Float by mutableStateOf(0f)
+    internal var maxRotationZ: Float by mutableStateOf(0f)
+    internal var velocityThreshold: Float by mutableStateOf(0f)
+    internal var minHorizontalProgressThreshold: Float by mutableStateOf(0f)
+    internal var minVerticalProgressThreshold: Float by mutableStateOf(0f)
 
-    //TODO derivedStateOf here is likely meaningless
+    val value get() = offset.value
+    val targetValue get() = offset.targetValue
+
     /**
      * Not coerced by directions
      */
     val horizontalDismissProgress by derivedStateOf {
-        offset.value.x / containerWidth * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
+        offset.value.x / containerWidthPx * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
     }
 
     /**
      * Not coerced by directions
      */
     val verticalDismissProgress by derivedStateOf {
-        offset.value.y / containerHeight
+        offset.value.y / containerHeightPx
     }
 
     val rotationZ by derivedStateOf {
-        maxRotationZ * offset.value.x / containerWidth
+        maxRotationZ * offset.value.x / containerWidthPx
     }
 
     /**
@@ -92,7 +89,14 @@ class DismissibleState(
     var dismissedDirection: Direction? by mutableStateOf(null)
         private set
 
-    internal suspend fun reset(
+    private val endX by derivedStateOf {
+        getEndX(containerWidth = containerWidthPx, containerHeight = containerHeightPx).toFloat()
+    }
+    private val endY by derivedStateOf {
+        getEndY(containerWidth = containerWidthPx, containerHeight = containerHeightPx).toFloat()
+    }
+
+    suspend fun reset(
         animationSpec: AnimationSpec<Offset>? = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
@@ -106,7 +110,7 @@ class DismissibleState(
         }
     }
 
-    suspend fun dismiss(direction: Direction, spec: AnimationSpec<Offset> = tween(400)) {
+    suspend fun dismiss(direction: Direction, spec: AnimationSpec<Offset> = tween(500)) {
         val directionMultiplier = if (layoutDirection == LayoutDirection.Rtl) -1 else 1
         when (direction) {
             Direction.Start -> offset.animateTo(offset(x = -endX * directionMultiplier), spec)
@@ -118,12 +122,54 @@ class DismissibleState(
         onDismiss(direction)
     }
 
-    private fun offset(x: Float = offset.value.x, y: Float = offset.value.y): Offset {
-        return Offset(x, y)
+    internal suspend fun performFling(velocity: Velocity) {
+        val directionMultiplier =
+            if (layoutDirection == LayoutDirection.Rtl) -1 else 1
+
+        val coercedVelocity = velocity.coerceIn(
+            allowedDirections = directions
+        )
+        val dismissDirectionDueToVelocity = getDismissDirection(
+            valueX = coercedVelocity.x * directionMultiplier,
+            valueY = coercedVelocity.y,
+            minValueX = velocityThreshold,
+            minValueY = velocityThreshold,
+        )
+
+        val coercedOffset = offset.targetValue.coerceIn(
+            allowedDirections = directions,
+            maxWidth = containerWidthPx,
+            maxHeight = containerHeightPx
+        )
+        val dismissDirectionDueToOffset = getDismissDirection(
+            valueX = coercedOffset.x * directionMultiplier,
+            valueY = coercedOffset.y,
+            minValueX = containerWidthPx * minHorizontalProgressThreshold,
+            minValueY = containerHeightPx * minVerticalProgressThreshold,
+        )
+
+        val dismissDirection: Direction? =
+            dismissDirectionDueToVelocity ?: dismissDirectionDueToOffset
+        if (dismissDirection != null) {
+            dismiss(dismissDirection)
+        } else {
+            reset()
+        }
     }
 
-    suspend fun drag(x: Float, y: Float) {
-        offset.animateTo(offset(x, y))
+    internal suspend fun performDrag(dragged: Offset) {
+        val original = offset.targetValue
+        val summed = original + dragged
+        offset.animateTo(
+            offset(
+                x = summed.x.coerceIn(-containerWidthPx, containerWidthPx),
+                y = summed.y.coerceIn(-containerHeightPx, containerHeightPx)
+            )
+        )
+    }
+
+    private fun offset(x: Float = offset.value.x, y: Float = offset.value.y): Offset {
+        return Offset(x, y)
     }
 
     private fun getEndX(containerWidth: Float, containerHeight: Float): Double {
@@ -138,5 +184,61 @@ class DismissibleState(
         val ninetyDegreesRadians = Math.toRadians(90.0)
         return abs(containerHeight * sin(ninetyDegreesRadians - maxRotationsRadians)) +
                 abs(containerWidth * sin(maxRotationsRadians))
+    }
+
+    private fun Offset.coerceIn(
+        allowedDirections: Set<Direction>,
+        maxWidth: Float,
+        maxHeight: Float,
+    ): Offset = copy(
+        x = x.coerceWidthIn(allowedDirections, maxWidth),
+        y = y.coerceHeightIn(allowedDirections, maxHeight)
+    )
+
+    private fun Velocity.coerceIn(
+        allowedDirections: Set<Direction>
+    ): Velocity = copy(
+        x = x.coerceWidthIn(allowedDirections, Float.MAX_VALUE),
+        y = y.coerceHeightIn(allowedDirections, Float.MAX_VALUE)
+    )
+
+    private fun Float.coerceWidthIn(
+        allowedDirections: Set<Direction>,
+        maxWidth: Float,
+    ): Float = coerceIn(
+        if (allowedDirections.contains(Direction.Start)) -maxWidth else 0f,
+        if (allowedDirections.contains(Direction.End)) maxWidth else 0f
+    )
+
+    private fun Float.coerceHeightIn(
+        allowedDirections: Set<Direction>,
+        maxHeight: Float,
+    ): Float = coerceIn(
+        if (allowedDirections.contains(Direction.Up)) -maxHeight else 0f,
+        if (allowedDirections.contains(Direction.Down)) maxHeight else 0f,
+    )
+
+    /**
+     * Finds the direction depending on which value is closest to its corresponding minValue
+     * @return The direction of the dismiss action
+     * or null if not the conditions for the dismiss have not been met
+     */
+    private fun getDismissDirection(
+        valueX: Float,
+        valueY: Float,
+        minValueX: Float,
+        minValueY: Float
+    ): Direction? {
+        return listOf(
+            Direction.End to valueX / minValueX,
+            Direction.Start to valueX.absoluteValue / minValueX,
+            Direction.Down to valueY / minValueY,
+            Direction.Up to valueY.absoluteValue / minValueY,
+        )
+            .sortedBy { (_, ratio) -> ratio }
+            .firstOrNull { (_, ratio) ->
+                ratio >= 1
+            }
+            ?.first
     }
 }

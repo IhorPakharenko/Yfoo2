@@ -30,6 +30,8 @@ abstract class MviViewModel<UI_STATE : Parcelable, PARTIAL_UI_STATE, EVENT, INTE
     private val intentFlowListenerStarted = CompletableDeferred<Unit>()
     private val continuousPartialStateFlowListenerStarted = CompletableDeferred<Unit>()
 
+    //TODO Saving screen UI state in SavedStateHandle is not recommended:
+    // https://developer.android.com/jetpack/compose/state-saving#best_practice_2
     val uiState = savedStateHandle.getStateFlow(SAVED_UI_STATE_KEY, initialState)
 
     private val eventChannel = Channel<EVENT>(Channel.BUFFERED)
