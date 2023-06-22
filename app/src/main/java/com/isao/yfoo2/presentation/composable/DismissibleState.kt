@@ -35,7 +35,7 @@ fun rememberDismissibleState(
     val layoutDirection = LocalLayoutDirection.current
     val onDismissState = rememberUpdatedState(onDismiss)
     val onDismissCancelState = rememberUpdatedState(onDismissCancel)
-    return remember { //TODO use rememberSaveable
+    return remember {
         DismissibleState(
             layoutDirection,
             { onDismissState.value.invoke(this, it) },
@@ -53,8 +53,8 @@ class DismissibleState(
     private val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
     internal var directions: Set<Direction> by mutableStateOf(emptySet())
-    internal var containerWidthPx: Float by mutableStateOf(0f)
-    internal var containerHeightPx: Float by mutableStateOf(0f)
+    internal var containerWidth: Float by mutableStateOf(0f)
+    internal var containerHeight: Float by mutableStateOf(0f)
     internal var maxRotationZ: Float by mutableStateOf(0f)
     internal var velocityThreshold: Float by mutableStateOf(0f)
     internal var minHorizontalProgressThreshold: Float by mutableStateOf(0f)
@@ -67,18 +67,18 @@ class DismissibleState(
      * Not coerced by directions
      */
     val horizontalDismissProgress by derivedStateOf {
-        offset.value.x / containerWidthPx * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
+        offset.value.x / containerWidth * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
     }
 
     /**
      * Not coerced by directions
      */
     val verticalDismissProgress by derivedStateOf {
-        offset.value.y / containerHeightPx
+        offset.value.y / containerHeight
     }
 
     val rotationZ by derivedStateOf {
-        maxRotationZ * offset.value.x / containerWidthPx
+        maxRotationZ * offset.value.x / containerWidth
     }
 
     /**
@@ -90,10 +90,10 @@ class DismissibleState(
         private set
 
     private val endX by derivedStateOf {
-        getEndX(containerWidth = containerWidthPx, containerHeight = containerHeightPx).toFloat()
+        getEndX(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
     }
     private val endY by derivedStateOf {
-        getEndY(containerWidth = containerWidthPx, containerHeight = containerHeightPx).toFloat()
+        getEndY(containerWidth = containerWidth, containerHeight = containerHeight).toFloat()
     }
 
     suspend fun reset(
@@ -138,14 +138,14 @@ class DismissibleState(
 
         val coercedOffset = offset.targetValue.coerceIn(
             allowedDirections = directions,
-            maxWidth = containerWidthPx,
-            maxHeight = containerHeightPx
+            maxWidth = containerWidth,
+            maxHeight = containerHeight
         )
         val dismissDirectionDueToOffset = getDismissDirection(
             valueX = coercedOffset.x * directionMultiplier,
             valueY = coercedOffset.y,
-            minValueX = containerWidthPx * minHorizontalProgressThreshold,
-            minValueY = containerHeightPx * minVerticalProgressThreshold,
+            minValueX = containerWidth * minHorizontalProgressThreshold,
+            minValueY = containerHeight * minVerticalProgressThreshold,
         )
 
         val dismissDirection: Direction? =
@@ -162,8 +162,8 @@ class DismissibleState(
         val summed = original + dragged
         offset.animateTo(
             offset(
-                x = summed.x.coerceIn(-containerWidthPx, containerWidthPx),
-                y = summed.y.coerceIn(-containerHeightPx, containerHeightPx)
+                x = summed.x.coerceIn(-containerWidth, containerWidth),
+                y = summed.y.coerceIn(-containerHeight, containerHeight)
             )
         )
     }

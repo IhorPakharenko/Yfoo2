@@ -20,8 +20,8 @@ fun Modifier.dismissible(
     state: DismissibleState,
     directions: Set<Direction>,
     enabled: Boolean = true,
-    containerWidthPx: Float,
-    containerHeightPx: Float,
+    containerWidth: Dp,
+    containerHeight: Dp,
     maxRotationZ: Float = 15f,
     velocityThreshold: Dp = 125.dp,
     minHorizontalProgressThreshold: Float = 0.7f,
@@ -35,14 +35,14 @@ fun Modifier.dismissible(
     }
 
     val density = LocalDensity.current
-    LaunchedEffect(directions, containerWidthPx, containerHeightPx) {
+    LaunchedEffect(directions, containerWidth, containerHeight) {
         state.directions = directions
-        state.containerWidthPx = containerWidthPx
-        state.containerHeightPx = containerHeightPx
         state.maxRotationZ = maxRotationZ
         state.minHorizontalProgressThreshold = minHorizontalProgressThreshold
         state.minVerticalProgressThreshold = minVerticalProgressThreshold
         with(density) {
+            state.containerWidth = containerWidth.toPx()
+            state.containerHeight = containerHeight.toPx()
             state.velocityThreshold = velocityThreshold.toPx()
         }
     }

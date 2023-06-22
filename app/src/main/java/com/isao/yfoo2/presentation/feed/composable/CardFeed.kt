@@ -3,7 +3,6 @@ package com.isao.yfoo2.presentation.feed.composable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,8 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.isao.yfoo2.R
@@ -41,6 +38,7 @@ import com.isao.yfoo2.presentation.composable.dismissible
 import com.isao.yfoo2.presentation.composable.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -74,36 +72,25 @@ fun CardFeed(
         )
 
         if (backgroundItem != null) {
-            ImageCard(url = backgroundItem.imageUrl)
-        }
-        Box(
-            Modifier
-                .dismissible(
-                    state = topItemState,
-                    directions = setOf(Direction.Start, Direction.End),
-                    enabled = topItem != null,
-                    containerWidthPx = with(LocalDensity.current) { maxWidth.toPx() },
-                    containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() },
-                )
-        ) {
-            ImageCard(
-                url = topItem?.imageUrl,//TODO nullability
-                modifier = Modifier.onGloballyPositioned {
-//                        topCardBounds = it.boundsInRoot()
-                }
+            FeedCard(
+                imageUrl = backgroundItem.imageUrl,
+                width = maxWidth,
+                height = maxHeight,
             )
         }
 
-//        else {
-//            //TODO cleanup
-//            Card(
-//                Modifier
-//                    .padding(horizontal = 16.dp, vertical = 32.dp)
-//                    .then(modifier)
-//            ) {
-//                Box(Modifier.placeholder(visible = true, highlight = PlaceholderHighlight.shimmer()))
-//            }
-//        }
+        FeedCard(
+            imageUrl = topItem?.imageUrl,
+            width = maxWidth,
+            height = maxHeight,
+            modifier = Modifier.dismissible(
+                state = topItemState,
+                directions = setOf(Direction.Start, Direction.End),
+                enabled = topItem != null,
+                containerWidth = maxWidth,
+                containerHeight = maxHeight,
+            )
+        )
 
         val dislikeButtonScale by remember {
             derivedStateOf {
@@ -125,22 +112,19 @@ fun CardFeed(
                 .align(Alignment.BottomCenter),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            //TODO While this workaround works, it looks ugly and I feel there is a better way.
-            // Trigger the dismiss animation only after the previous one has ended
-            var isCardBeingDismissedByButton by remember { mutableStateOf(false) }
+            var dismissCardJob by remember { mutableStateOf<Job?>(null) }
             FeedButton(
                 onClick = {
                     scope.launch {
-                        if (isCardBeingDismissedByButton) return@launch
-                        isCardBeingDismissedByButton = true
-                        topItemState.dismiss(Direction.Start)
-                        isCardBeingDismissedByButton = false
+                        if (dismissCardJob?.isActive == true) return@launch
+                        dismissCardJob = launch { topItemState.dismiss(Direction.Start) }
                     }
                 },
                 modifier = Modifier.graphicsLayer {
                     scaleX = animatedDislikeButtonScale
                     scaleY = animatedDislikeButtonScale
-                }
+                },
+                enabled = topItem != null
             ) {
                 DislikeIcon()
             }
@@ -148,16 +132,15 @@ fun CardFeed(
             FeedButton(
                 onClick = {
                     scope.launch {
-                        if (isCardBeingDismissedByButton) return@launch
-                        isCardBeingDismissedByButton = true
-                        topItemState.dismiss(Direction.End)
-                        isCardBeingDismissedByButton = false
+                        if (dismissCardJob?.isActive == true) return@launch
+                        dismissCardJob = launch { topItemState.dismiss(Direction.End) }
                     }
                 },
                 modifier = Modifier.graphicsLayer {
                     scaleX = animatedLikeButtonScale
                     scaleY = animatedLikeButtonScale
-                }
+                },
+                enabled = topItem != null
             ) {
                 LikeIcon()
             }

@@ -101,7 +101,6 @@ fun FeedScreen(
                 uiState,
                 onIntent
             )
-            //TODO loading and errors
         }
     }
 }
