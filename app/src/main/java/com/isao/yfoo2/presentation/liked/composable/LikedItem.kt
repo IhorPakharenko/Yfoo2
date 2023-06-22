@@ -3,12 +3,16 @@ package com.isao.yfoo2.presentation.liked.composable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -45,21 +49,34 @@ fun LikedItem(
             .transformations(BorderCropTransformation())
             .build(),
         placeholder = debugPlaceholder(Color.Magenta),
-        error = rememberVectorPainter(Icons.Default.ErrorOutline),
         contentScale = ContentScale.Crop,
     )
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = modifier
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
+    if (painter.state !is AsyncImagePainter.State.Error) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = modifier
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                )
+                .placeholder(
+                    visible = painter.state is AsyncImagePainter.State.Loading,
+                    highlight = PlaceholderHighlight.shimmer()
+                ),
+            contentScale = ContentScale.Crop,
+        )
+    } else {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.ErrorOutline,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(0.5f),
+                tint = MaterialTheme.colorScheme.error
             )
-            .placeholder(
-                visible = painter.state is AsyncImagePainter.State.Loading,
-                highlight = PlaceholderHighlight.shimmer()
-            ),
-        contentScale = ContentScale.Crop,
-    )
+        }
+    }
 }

@@ -1,15 +1,18 @@
 package com.isao.yfoo2.presentation.feed.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -36,6 +39,11 @@ fun FeedCard(
             .padding(horizontal = 16.dp, vertical = 32.dp)
             .then(modifier)
     ) {
+        if (imageUrl == null) {
+            EmptyPlaceholder()
+            return@Card
+        }
+
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
@@ -48,19 +56,54 @@ fun FeedCard(
                 .transformations(BorderCropTransformation())
                 .build(),
             placeholder = debugPlaceholder(Color.Magenta),
-            error = rememberVectorPainter(Icons.Default.ErrorOutline),
             contentScale = ContentScale.Crop,
         )
-        Image(
-            painter = painter,
+
+        when (painter.state) {
+            is AsyncImagePainter.State.Success -> {
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            is AsyncImagePainter.State.Loading, AsyncImagePainter.State.Empty -> {
+                EmptyPlaceholder()
+            }
+
+            is AsyncImagePainter.State.Error -> {
+                ErrorPlaceholder()
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyPlaceholder() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .placeholder(
+                visible = true,
+                highlight = PlaceholderHighlight.shimmer()
+            )
+    )
+}
+
+@Composable
+private fun ErrorPlaceholder() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.ErrorOutline,
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .placeholder(
-                    visible = painter.state is AsyncImagePainter.State.Loading || imageUrl == null,
-                    highlight = PlaceholderHighlight.shimmer()
-                ),
-            contentScale = ContentScale.Crop
+            modifier = Modifier.fillMaxSize(0.2f),
+            tint = MaterialTheme.colorScheme.error
         )
     }
 }
