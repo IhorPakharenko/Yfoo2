@@ -33,9 +33,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.extensions.scale
-import com.isao.yfoo2.presentation.composable.Direction
-import com.isao.yfoo2.presentation.composable.dismissible
-import com.isao.yfoo2.presentation.composable.rememberDismissibleState
+import com.isao.yfoo2.presentation.composable.dismissible.DismissDirection
+import com.isao.yfoo2.presentation.composable.dismissible.dismissible
+import com.isao.yfoo2.presentation.composable.dismissible.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
 import kotlinx.coroutines.Job
@@ -61,8 +61,8 @@ fun CardFeed(
             onDismiss = { direction ->
                 onIntent(
                     when (direction) {
-                        Direction.Start -> FeedIntent.Dislike(topItem!!) //TODO nullability
-                        Direction.End -> FeedIntent.Like(topItem!!) //TODO nullability
+                        DismissDirection.Start -> FeedIntent.Dislike(topItem!!) //TODO nullability
+                        DismissDirection.End -> FeedIntent.Like(topItem!!) //TODO nullability
                         else -> throw IllegalArgumentException()
                     }
                 )
@@ -92,7 +92,7 @@ fun CardFeed(
             height = maxHeight,
             modifier = Modifier.dismissible(
                 state = topItemState,
-                directions = setOf(Direction.Start, Direction.End),
+                directions = setOf(DismissDirection.Start, DismissDirection.End),
                 enabled = topItem != null,
                 containerWidth = maxWidth,
                 containerHeight = maxHeight,
@@ -124,7 +124,7 @@ fun CardFeed(
                 onClick = {
                     scope.launch {
                         if (dismissCardJob?.isActive == true) return@launch
-                        dismissCardJob = launch { topItemState.dismiss(Direction.Start) }
+                        dismissCardJob = launch { topItemState.dismiss(DismissDirection.Start) }
                     }
                 },
                 modifier = Modifier.graphicsLayer {
@@ -140,7 +140,7 @@ fun CardFeed(
                 onClick = {
                     scope.launch {
                         if (dismissCardJob?.isActive == true) return@launch
-                        dismissCardJob = launch { topItemState.dismiss(Direction.End) }
+                        dismissCardJob = launch { topItemState.dismiss(DismissDirection.End) }
                     }
                 },
                 modifier = Modifier.graphicsLayer {

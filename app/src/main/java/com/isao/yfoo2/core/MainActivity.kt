@@ -32,10 +32,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.navigation.NavigationFactory
-import com.isao.yfoo2.core.navigation.NavigationHost
+import com.isao.yfoo2.core.navigation.Screen
+import com.isao.yfoo2.core.navigation.YfooNavHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import com.isao.yfoo2.presentation.Screen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.collections.immutable.toImmutableSet
 import javax.inject.Inject
 
 enum class BottomNavigationScreen(
@@ -111,15 +112,9 @@ class MainActivity : FragmentActivity() {
                         // Material3 components handle the insets themselves
                         contentWindowInsets = WindowInsets(0, 0, 0, 0)
                     ) { padding ->
-//                        YfooNavHost(
-//                            navController = navController,
-//                            modifier = Modifier
-//                                .fillMaxHeight()
-//                                .padding(padding),
-//                        )
-                        NavigationHost(
+                        YfooNavHost(
                             navController = navController,
-                            factories = navigationFactories,
+                            factories = navigationFactories.toImmutableSet(),
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(padding),

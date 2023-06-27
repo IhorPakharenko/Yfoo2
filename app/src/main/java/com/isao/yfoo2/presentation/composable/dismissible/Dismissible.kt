@@ -1,4 +1,4 @@
-package com.isao.yfoo2.presentation.composable
+package com.isao.yfoo2.presentation.composable.dismissible
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 fun Modifier.dismissible(
     state: DismissibleState,
-    directions: Set<Direction>,
+    directions: Set<DismissDirection>,
     enabled: Boolean = true,
     containerWidth: Dp,
     containerHeight: Dp,
