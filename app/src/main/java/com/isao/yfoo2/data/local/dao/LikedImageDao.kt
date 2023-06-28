@@ -28,4 +28,7 @@ interface LikedImageDao {
 
     @Upsert
     suspend fun saveLikedImage(item: LikedImageCached)
+
+    @Query("DELETE FROM LikedImageCached WHERE id = :id")
+    suspend fun deleteLikedImage(id: String)
 }

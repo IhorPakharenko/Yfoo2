@@ -8,5 +8,7 @@ sealed class LikedIntent {
 
     data class ImageClicked(val item: LikedImageDisplayable) : LikedIntent()
 
-    data class ImageLongClicked(val item: LikedImageDisplayable) : LikedIntent()
+    data class ViewImageSourceClicked(val item: LikedImageDisplayable) : LikedIntent()
+
+    data class DeleteImageClicked(val item: LikedImageDisplayable) : LikedIntent()
 }

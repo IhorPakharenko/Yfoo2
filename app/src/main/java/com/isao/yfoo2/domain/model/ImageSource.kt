@@ -10,6 +10,11 @@ enum class ImageSource {
             THIS_WAIFU_DOES_NOT_EXIST -> "https://www.thiswaifudoesnotexist.net/"
         }
 
+    val websiteName
+        get() = when (this) {
+            THIS_WAIFU_DOES_NOT_EXIST -> "This Waifu Does Not Exist"
+        }
+
     fun getImageUrl(id: String) = when (this) {
         THIS_WAIFU_DOES_NOT_EXIST -> {
             "https://www.thiswaifudoesnotexist.net/example-$id.jpg"

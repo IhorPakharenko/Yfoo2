@@ -7,4 +7,6 @@
     <string name="nothing_is_there_yet">Nothing is there yet!</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="added">Added</string>
+    <string name="image_by">Image by %1$s</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -35,6 +35,6 @@ class LikedImageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteImage(id: String) {
-        TODO("Not yet implemented")
+        likedImageDao.deleteLikedImage(id)
     }
 }

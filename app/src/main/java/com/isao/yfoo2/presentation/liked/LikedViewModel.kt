@@ -2,6 +2,7 @@ package com.isao.yfoo2.presentation.liked
 
 import androidx.lifecycle.SavedStateHandle
 import com.isao.yfoo2.core.MviViewModel
+import com.isao.yfoo2.domain.usecase.DeleteLikedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetLikedImagesUseCase
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
 import com.isao.yfoo2.presentation.model.LikedImageDisplayable
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LikedViewModel @Inject constructor(
     private val getLikedImagesUseCase: GetLikedImagesUseCase,
+    private val deleteLikedImageUseCase: DeleteLikedImageUseCase,
     savedStateHandle: SavedStateHandle,
 ) : MviViewModel<LikedUiState, LikedPartialState, LikedEvent, LikedIntent>(
     savedStateHandle,
@@ -43,9 +46,10 @@ class LikedViewModel @Inject constructor(
     }
 
     override fun mapIntents(intent: LikedIntent): Flow<LikedPartialState> = when (intent) {
-        is LikedIntent.ImageClicked -> itemClicked(intent.item)
-        is LikedIntent.ImageLongClicked -> itemLongClicked(intent.item)
         is LikedIntent.SetSorting -> flowOf(LikedPartialState.Sorted(shouldSortAscending = intent.shouldSortAscending))
+        is LikedIntent.ImageClicked -> itemClicked(intent.item)
+        is LikedIntent.DeleteImageClicked -> deleteImageClicked(intent.item)
+        is LikedIntent.ViewImageSourceClicked -> viewImageSourceClicked(intent.item)
     }
 
     override fun reduceUiState(
@@ -99,8 +103,12 @@ class LikedViewModel @Inject constructor(
         return emptyFlow()
     }
 
-    private fun itemLongClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
-        publishEvent(LikedEvent.OpenWebBrowser(item.sourceUrl))
+    private fun deleteImageClicked(item: LikedImageDisplayable): Flow<LikedPartialState> = flow {
+        deleteLikedImageUseCase(item.id)
+    }
+
+    private fun viewImageSourceClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
+        publishEvent(LikedEvent.OpenWebBrowser(item.source.websiteUrl))
         return emptyFlow()
     }
 }
