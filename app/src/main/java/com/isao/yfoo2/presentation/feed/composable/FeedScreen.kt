@@ -8,26 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo2.R
@@ -54,13 +44,6 @@ fun FeedScreen(
     onIntent: (FeedIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var topAppBarBounds by remember { mutableStateOf<Rect?>(null) }
-    var topCardBounds by remember { mutableStateOf<Rect?>(null) }
-    val showTopAppBarDivider by remember {
-        derivedStateOf {
-            topCardBounds?.overlaps(topAppBarBounds ?: return@derivedStateOf false) == true
-        }
-    }
     val snackbarHostState = remember { SnackbarHostState() }
 
     //TODO move the card above the app bar
@@ -69,16 +52,6 @@ fun FeedScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(stringResource(R.string.app_name))
-                },
-                modifier = Modifier.onGloballyPositioned {
-                    topAppBarBounds = it.boundsInRoot()
-                },
-                colors = if (showTopAppBarDivider) {
-                    TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp)
-                    )
-                } else {
-                    TopAppBarDefaults.centerAlignedTopAppBarColors()
                 }
             )
         },
