@@ -1,6 +1,5 @@
 package com.isao.yfoo2.presentation.feed
 
-import androidx.lifecycle.SavedStateHandle
 import com.isao.yfoo2.core.MviViewModel
 import com.isao.yfoo2.domain.usecase.DeleteFeedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
@@ -19,9 +18,7 @@ class FeedViewModel @Inject constructor(
     private val likeImageUseCase: LikeImageUseCase,
     private val deleteFeedImageUseCase: DeleteFeedImageUseCase,
     private val getFeedImagesUseCase: GetFeedImagesUseCase,
-    savedStateHandle: SavedStateHandle,
 ) : MviViewModel<FeedUiState, FeedPartialState, Nothing, FeedIntent>(
-    savedStateHandle,
     FeedUiState()
 ) {
     init {

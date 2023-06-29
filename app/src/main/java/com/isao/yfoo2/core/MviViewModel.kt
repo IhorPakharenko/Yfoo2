@@ -1,62 +1,73 @@
 package com.isao.yfoo2.core
 
-import android.os.Parcelable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.time.Duration.Companion.seconds
 
-private const val SAVED_UI_STATE_KEY = "savedUiStateKey"
-
-abstract class MviViewModel<UI_STATE : Parcelable, PARTIAL_UI_STATE, EVENT, INTENT>(
-    savedStateHandle: SavedStateHandle,
+@OptIn(ExperimentalCoroutinesApi::class)
+abstract class MviViewModel<UI_STATE, PARTIAL_UI_STATE, EVENT, INTENT>(
     initialState: UI_STATE,
 ) : ViewModel() {
     private val intentFlow = MutableSharedFlow<INTENT>()
-    private val continuousPartialStateFlow = MutableSharedFlow<PARTIAL_UI_STATE>()
+    private val continuousPartialStateFlow =
+        MutableStateFlow<List<Flow<PARTIAL_UI_STATE>>>(emptyList())
 
     private val intentFlowListenerStarted = CompletableDeferred<Unit>()
     private val continuousPartialStateFlowListenerStarted = CompletableDeferred<Unit>()
 
-    //TODO Saving screen UI state in SavedStateHandle is not recommended:
-    // https://developer.android.com/jetpack/compose/state-saving#best_practice_2
-    val uiState = savedStateHandle.getStateFlow(SAVED_UI_STATE_KEY, initialState)
+    private val _uiStateSnapshot = MutableStateFlow(initialState)
+
+    /**
+     * The flow of UI state which can safely be observed forever.
+     * It only contains a copy of the latest UI state,
+     * so observing this flow will still allow [uiState] and [continuousPartialStateFlow] to stop.
+     */
+    protected val uiStateSnapshot = _uiStateSnapshot.asStateFlow()
+
+    /**
+     * The flow of UI state which should be accessed only from the UI.
+     * Will stop without subscribers, stopping every flow of [continuousPartialStateFlow] as well.
+     */
+    val uiState = merge(
+        userIntents(),
+        continuousFlows().flatMapConcat { it.merge() },
+    )
+        .scan(initialState, ::reduceUiState)
+        .onEach {
+            _uiStateSnapshot.value = it
+        }
+        .catch { Timber.e(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), initialState)
 
     private val eventChannel = Channel<EVENT>(Channel.BUFFERED)
     val event = eventChannel.receiveAsFlow()
-
-    init {
-        viewModelScope.launch {
-            merge(
-                userIntents(),
-                continuousFlows(),
-            )
-                .scan(uiState.value, ::reduceUiState)
-                .catch { Timber.e(it) }
-                .collect {
-                    savedStateHandle[SAVED_UI_STATE_KEY] = it
-                }
-        }
-    }
 
     private fun userIntents(): Flow<PARTIAL_UI_STATE> =
         intentFlow
             .onStart { intentFlowListenerStarted.complete(Unit) }
             .flatMapConcat(::mapIntents)
 
-    private fun continuousFlows(): Flow<PARTIAL_UI_STATE> =
+    private fun continuousFlows(): Flow<List<Flow<PARTIAL_UI_STATE>>> =
         continuousPartialStateFlow
             .onStart { continuousPartialStateFlowListenerStarted.complete(Unit) }
 
@@ -70,7 +81,7 @@ abstract class MviViewModel<UI_STATE : Parcelable, PARTIAL_UI_STATE, EVENT, INTE
     protected fun observeContinuousChanges(changesFlow: Flow<PARTIAL_UI_STATE>) {
         viewModelScope.launch {
             continuousPartialStateFlowListenerStarted.await()
-            continuousPartialStateFlow.emitAll(changesFlow)
+            continuousPartialStateFlow.update { it + changesFlow }
         }
     }
 

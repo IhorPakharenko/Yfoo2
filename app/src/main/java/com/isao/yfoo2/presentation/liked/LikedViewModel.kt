@@ -1,6 +1,7 @@
 package com.isao.yfoo2.presentation.liked
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.isao.yfoo2.core.MviViewModel
 import com.isao.yfoo2.domain.usecase.DeleteLikedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetLikedImagesUseCase
@@ -16,7 +17,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val SHOULD_SORT_ASCENDING = "shouldSortAscending"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -25,24 +29,25 @@ class LikedViewModel @Inject constructor(
     private val deleteLikedImageUseCase: DeleteLikedImageUseCase,
     savedStateHandle: SavedStateHandle,
 ) : MviViewModel<LikedUiState, LikedPartialState, LikedEvent, LikedIntent>(
-    savedStateHandle,
     LikedUiState(
-        items = emptyList(),
-        shouldSortAscending = false,
-        isLoading = false,
-        isError = false
+        shouldSortAscending = savedStateHandle[SHOULD_SORT_ASCENDING] ?: false
     )
 ) {
-
     init {
         observeContinuousChanges(
-            uiState
+            uiStateSnapshot
                 .map { it.shouldSortAscending }
                 .distinctUntilChanged()
                 .flatMapLatest { sortAscending ->
                     getImages(sortAscending)
                 }
         )
+
+        viewModelScope.launch {
+            uiStateSnapshot.collect { state ->
+                savedStateHandle[SHOULD_SORT_ASCENDING] = state.shouldSortAscending
+            }
+        }
     }
 
     override fun mapIntents(intent: LikedIntent): Flow<LikedPartialState> = when (intent) {
