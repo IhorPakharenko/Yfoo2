@@ -3,6 +3,7 @@ package com.isao.yfoo2.presentation.feed.composable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,9 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.extensions.scale
 import com.isao.yfoo2.presentation.composable.dismissible.DismissDirection
+import com.isao.yfoo2.presentation.composable.dismissible.DismissibleState
 import com.isao.yfoo2.presentation.composable.dismissible.dismissible
 import com.isao.yfoo2.presentation.composable.dismissible.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
@@ -86,71 +89,101 @@ fun CardFeed(
             )
         }
 
+        val topItemPainter = topItem?.imageUrl?.let { url ->
+            FeedCardDefaults.rememberAsyncImagePainter(
+                imageUrl = url,
+                width = maxWidth,
+                height = maxHeight
+            )
+        }
+        val isTopItemEnabled by remember(topItem) {
+            derivedStateOf {
+                topItemPainter?.state is AsyncImagePainter.State.Success
+            }
+        }
+
         FeedCard(
-            imageUrl = topItem?.imageUrl,
-            width = maxWidth,
-            height = maxHeight,
+            painter = topItemPainter,
             modifier = Modifier.dismissible(
                 state = topItemState,
-                directions = setOf(DismissDirection.Start, DismissDirection.End),
-                enabled = topItem != null,
+                directions = if (isTopItemEnabled) {
+                    setOf(DismissDirection.Start, DismissDirection.End)
+                } else {
+                    emptySet()
+                },
+                enabled = isTopItemEnabled,
                 containerWidth = maxWidth,
                 containerHeight = maxHeight,
             )
         )
 
-        val dislikeButtonScale by remember {
-            derivedStateOf {
-                getButtonScale(topItemState.horizontalDismissProgress * -1)
-            }
-        }
-        val likeButtonScale by remember {
-            derivedStateOf {
-                getButtonScale(topItemState.horizontalDismissProgress)
-            }
-        }
+        FeedButtons(
+            topItemState = topItemState,
+            enabled = isTopItemEnabled,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
 
-        val animatedDislikeButtonScale by animateFloatAsState(dislikeButtonScale)
-        val animatedLikeButtonScale by animateFloatAsState(likeButtonScale)
+@Composable
+private fun FeedButtons(
+    topItemState: DismissibleState,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) = Box(modifier) {
+    val scope = rememberCoroutineScope()
 
-        Row(
-            Modifier
-                .padding(bottom = 48.dp)
-                .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement.SpaceBetween
+    val dislikeButtonScale by remember {
+        derivedStateOf {
+            getButtonScale(topItemState.horizontalDismissProgress * -1)
+        }
+    }
+    val likeButtonScale by remember {
+        derivedStateOf {
+            getButtonScale(topItemState.horizontalDismissProgress)
+        }
+    }
+
+    val animatedDislikeButtonScale by animateFloatAsState(dislikeButtonScale)
+    val animatedLikeButtonScale by animateFloatAsState(likeButtonScale)
+
+    Row(
+        Modifier
+            .padding(bottom = 48.dp)
+            .align(Alignment.BottomCenter),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        var dismissAnimationJob by remember { mutableStateOf<Job?>(null) }
+        FeedButton(
+            onClick = {
+                scope.launch {
+                    if (dismissAnimationJob?.isActive == true) return@launch
+                    dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.Start) }
+                }
+            },
+            modifier = Modifier.graphicsLayer {
+                scaleX = animatedDislikeButtonScale
+                scaleY = animatedDislikeButtonScale
+            },
+            enabled = enabled
         ) {
-            var dismissCardJob by remember { mutableStateOf<Job?>(null) }
-            FeedButton(
-                onClick = {
-                    scope.launch {
-                        if (dismissCardJob?.isActive == true) return@launch
-                        dismissCardJob = launch { topItemState.dismiss(DismissDirection.Start) }
-                    }
-                },
-                modifier = Modifier.graphicsLayer {
-                    scaleX = animatedDislikeButtonScale
-                    scaleY = animatedDislikeButtonScale
-                },
-                enabled = topItem != null
-            ) {
-                DislikeIcon()
-            }
-            Spacer(Modifier.width(72.dp))
-            FeedButton(
-                onClick = {
-                    scope.launch {
-                        if (dismissCardJob?.isActive == true) return@launch
-                        dismissCardJob = launch { topItemState.dismiss(DismissDirection.End) }
-                    }
-                },
-                modifier = Modifier.graphicsLayer {
-                    scaleX = animatedLikeButtonScale
-                    scaleY = animatedLikeButtonScale
-                },
-                enabled = topItem != null
-            ) {
-                LikeIcon()
-            }
+            DislikeIcon()
+        }
+        Spacer(Modifier.width(72.dp))
+        FeedButton(
+            onClick = {
+                scope.launch {
+                    if (dismissAnimationJob?.isActive == true) return@launch
+                    dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.End) }
+                }
+            },
+            modifier = Modifier.graphicsLayer {
+                scaleX = animatedLikeButtonScale
+                scaleY = animatedLikeButtonScale
+            },
+            enabled = enabled
+        ) {
+            LikeIcon()
         }
     }
 }
