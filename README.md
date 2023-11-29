@@ -2,12 +2,12 @@
 
 An Android project showcasing best practices with Kotlin and latest Jetpack libraries.
 
-The architecture was inspired by the [Android Kotlin starter project] (https://github.com/krzdabrowski/android-starter-2022), though it has been modified significantly.
+The architecture was inspired by the [Android Kotlin starter project](https://github.com/krzdabrowski/android-starter-2022), though it has been modified significantly.
 
 <img src="readme/feed.gif" alt="Feed" width="240">
 
 ### Description
-This application showcases a custom Tinder-like UI designed for viewing an endless list of images. Images that are liked can subsequently be accessed on a separate screen. Utilizes images from This Waifu Does Not Exist (https://www.thiswaifudoesnotexist.net/). Adopts offline-first approach. Supports light/dark mode and dynamic color from Material 3.
+This application showcases a custom Tinder-like UI designed for viewing an endless list of images. Images that are liked can subsequently be accessed on a separate screen. Utilizes images from [This Waifu Does Not Exist](https://www.thiswaifudoesnotexist.net/). Adopts offline-first approach. Supports light/dark mode and dynamic color from Material 3.
 
 ### Libraries/concepts used
 
