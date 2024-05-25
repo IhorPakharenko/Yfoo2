@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 private const val APP_DB_NAME = "room"
 
-@Module
+@Module //TODO this should be in the app package instead of the core package
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
