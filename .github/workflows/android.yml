@@ -22,7 +22,8 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - uses: actions/cache@v4
+      - name: Set up gradle caching
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
