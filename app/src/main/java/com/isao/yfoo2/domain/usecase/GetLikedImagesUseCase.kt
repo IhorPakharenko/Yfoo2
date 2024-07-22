@@ -5,9 +5,10 @@ import com.isao.yfoo2.domain.repository.LikedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class GetLikedImagesUseCase @Inject constructor(
+@Single
+class GetLikedImagesUseCase(
     private val likedImageRepository: LikedImageRepository
 ) {
     operator fun invoke(

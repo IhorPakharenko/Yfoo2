@@ -31,13 +31,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.isao.yfoo2.R
-import com.isao.yfoo2.core.navigation.NavigationFactory
+import com.isao.yfoo2.core.navigation.NavigationFactories
 import com.isao.yfoo2.core.navigation.Screen
 import com.isao.yfoo2.core.navigation.YfooNavHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.toImmutableSet
-import javax.inject.Inject
+import org.koin.compose.koinInject
 
 enum class BottomNavigationScreen(
     val route: String,
@@ -48,11 +47,7 @@ enum class BottomNavigationScreen(
     Liked(Screen.Liked.route, R.string.liked, Icons.Filled.Favorite),
 }
 
-@AndroidEntryPoint
 class MainActivity : FragmentActivity() {
-
-    @Inject
-    lateinit var navigationFactories: @JvmSuppressWildcards Set<NavigationFactory>
 
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,7 +109,7 @@ class MainActivity : FragmentActivity() {
                     ) { padding ->
                         YfooNavHost(
                             navController = navController,
-                            factories = navigationFactories.toImmutableSet(),
+                            factories = koinInject<NavigationFactories>().list.toImmutableSet(),
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(padding),

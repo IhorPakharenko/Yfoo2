@@ -5,9 +5,10 @@ import com.isao.yfoo2.domain.repository.FeedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class GetFeedImagesUseCase @Inject constructor(
+@Single
+class GetFeedImagesUseCase(
     private val feedImageRepository: FeedImageRepository
 ) {
     operator fun invoke(): Flow<Result<List<FeedImage>>> {

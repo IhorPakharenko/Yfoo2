@@ -2,9 +2,10 @@ package com.isao.yfoo2.domain.usecase
 
 import com.isao.yfoo2.core.extensions.resultOf
 import com.isao.yfoo2.domain.repository.FeedImageRepository
-import javax.inject.Inject
+import org.koin.core.annotation.Factory
 
-class AddRandomFeedImageUseCase @Inject constructor(
+@Factory
+class AddRandomFeedImageUseCase(
     private val feedImageRepository: FeedImageRepository,
 ) {
     suspend operator fun invoke(): Result<Unit> {

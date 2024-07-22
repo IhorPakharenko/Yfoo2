@@ -5,9 +5,10 @@ import androidx.navigation.compose.composable
 import com.isao.yfoo2.core.BottomNavigationScreen
 import com.isao.yfoo2.core.navigation.NavigationFactory
 import com.isao.yfoo2.presentation.liked.composable.LikedRoute
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class LikedNavigationFactory @Inject constructor() : NavigationFactory {
+@Single
+class LikedNavigationFactory : NavigationFactory {
 
     override fun create(builder: NavGraphBuilder) {
         builder.composable(BottomNavigationScreen.Liked.route) {

@@ -6,15 +6,14 @@ import com.isao.yfoo2.domain.usecase.GetFeedImagesUseCase
 import com.isao.yfoo2.domain.usecase.LikeImageUseCase
 import com.isao.yfoo2.presentation.feed.mapper.toPresentationModel
 import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
+import org.koin.android.annotation.KoinViewModel
 
-@HiltViewModel
-class FeedViewModel @Inject constructor(
+@KoinViewModel
+class FeedViewModel(
     private val likeImageUseCase: LikeImageUseCase,
     private val deleteFeedImageUseCase: DeleteFeedImageUseCase,
     private val getFeedImagesUseCase: GetFeedImagesUseCase,

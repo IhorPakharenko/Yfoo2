@@ -7,9 +7,10 @@ import com.isao.yfoo2.domain.model.LikedImage
 import com.isao.yfoo2.domain.repository.LikedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class LikedImageRepositoryImpl @Inject constructor(
+@Single(binds = [LikedImageRepository::class])
+class LikedImageRepositoryImpl(
     private val likedImageDao: LikedImageDao,
 ) : LikedImageRepository {
 

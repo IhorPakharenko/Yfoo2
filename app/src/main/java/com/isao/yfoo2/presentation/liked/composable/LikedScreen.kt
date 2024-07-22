@@ -55,7 +55,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.extensions.collectWithLifecycle
@@ -68,10 +67,11 @@ import com.isao.yfoo2.presentation.liked.LikedUiState
 import com.isao.yfoo2.presentation.liked.LikedViewModel
 import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 import kotlinx.coroutines.flow.Flow
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LikedRoute(
-    viewModel: LikedViewModel = hiltViewModel()
+    viewModel: LikedViewModel = koinViewModel()
 ) {
     HandleEvents(viewModel.event)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

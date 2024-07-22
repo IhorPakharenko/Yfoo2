@@ -5,9 +5,10 @@ import androidx.navigation.compose.composable
 import com.isao.yfoo2.core.BottomNavigationScreen
 import com.isao.yfoo2.core.navigation.NavigationFactory
 import com.isao.yfoo2.presentation.feed.composable.FeedRoute
-import javax.inject.Inject
+import org.koin.core.annotation.Factory
 
-class FeedNavigationFactory @Inject constructor() : NavigationFactory {
+@Factory
+class FeedNavigationFactory : NavigationFactory {
 
     override fun create(builder: NavGraphBuilder) {
         builder.composable(BottomNavigationScreen.Feed.route) {

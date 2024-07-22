@@ -5,9 +5,10 @@ import com.isao.yfoo2.data.local.mapper.toLikedImage
 import com.isao.yfoo2.domain.repository.FeedImageRepository
 import com.isao.yfoo2.domain.repository.LikedImageRepository
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class LikeImageUseCase @Inject constructor(
+@Single
+class LikeImageUseCase(
     private val feedImageRepository: FeedImageRepository,
     private val likedImageRepository: LikedImageRepository,
 ) {

@@ -9,9 +9,10 @@ import com.isao.yfoo2.domain.repository.FeedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import org.koin.core.annotation.Single
 
-class FeedImageRepositoryImpl @Inject constructor(
+@Single(binds = [FeedImageRepository::class])
+class FeedImageRepositoryImpl(
     private val feedImageDao: FeedImageDao,
 ) : FeedImageRepository {
 
