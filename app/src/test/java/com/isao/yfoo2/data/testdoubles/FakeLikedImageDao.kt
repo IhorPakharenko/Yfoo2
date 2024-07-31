@@ -25,7 +25,8 @@ class FakeLikedImageDao : LikedImageDao {
             } else {
                 images.sortedByDescending { it.dateAdded }
             }
-            sortedImages.drop(offset).take(limit)
+            // Room treats -1 as no limit
+            sortedImages.drop(offset).take(limit.takeIf { it >= 0 } ?: Int.MAX_VALUE)
         }
     }
 
