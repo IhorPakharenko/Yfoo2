@@ -167,10 +167,13 @@ dependencies {
     testImplementation "io.kotest:kotest-assertions-core:$kotest_version"
     testImplementation "io.kotest:kotest-framework-datatest:$kotest_version"
     testImplementation("br.com.colman:kotest-extensions-android:0.1.3")
+    testImplementation("io.kotest.extensions:kotest-extensions-koin:1.3.0")
 
-//    def mockkVersion = "1.13.12"
-//    testImplementation "io.mockk:mockk-android:${mockkVersion}"
-//    testImplementation "io.mockk:mockk-agent:${mockkVersion}"
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+
+    def mockkVersion = "1.13.12"
+    testImplementation "io.mockk:mockk-android:${mockkVersion}"
+    testImplementation "io.mockk:mockk-agent:${mockkVersion}"
 
     // Includes Robolectric
     androidTestImplementation("br.com.colman:kotest-assertions-android:1.1.1")

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.isao.yfoo2.core.MviViewModel
 import com.isao.yfoo2.domain.usecase.DeleteLikedImageUseCase
 import com.isao.yfoo2.domain.usecase.GetLikedImagesUseCase
+import com.isao.yfoo2.presentation.liked.LikedViewModel.Keys.SHOULD_SORT_ASCENDING
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
 import com.isao.yfoo2.presentation.model.LikedImageDisplayable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-
-private const val SHOULD_SORT_ASCENDING = "shouldSortAscending"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @KoinViewModel
@@ -114,5 +113,9 @@ class LikedViewModel(
     private fun viewImageSourceClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
         publishEvent(LikedEvent.OpenWebBrowser(item.source.websiteUrl))
         return emptyFlow()
+    }
+
+    object Keys {
+        const val SHOULD_SORT_ASCENDING = "shouldSortAscending"
     }
 }

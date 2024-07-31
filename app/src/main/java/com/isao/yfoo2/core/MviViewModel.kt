@@ -52,10 +52,10 @@ abstract class MviViewModel<UI_STATE, PARTIAL_UI_STATE, EVENT, INTENT>(
         userIntents(),
         continuousFlows().flatMapConcat { it.merge() },
     )
+        .onEach { Timber.d("New partial state:\n$it") }
         .scan(initialState, ::reduceUiState)
-        .onEach {
-            _uiStateSnapshot.value = it
-        }
+        .onEach { _uiStateSnapshot.value = it }
+        .onEach { Timber.d("New state:\n$it") }
         .catch { Timber.e(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), initialState)
 
