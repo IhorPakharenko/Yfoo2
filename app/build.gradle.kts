@@ -53,11 +53,23 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // See https://github.com/Kotlin/kotlinx.coroutines/issues/2023#issuecomment-858644393
+            excludes += "META-INF/licenses/ASM"
+            pickFirsts += "win32-x86-64/attach_hotspot_windows.dll"
+            pickFirsts += "win32-x86/attach_hotspot_windows.dll"
         }
     }
     sourceSets.all {
         java.srcDirs("src/$name/kotlin")
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+//    tasks.withType<Test> {
+//        useJUnitPlatform()
+//    }
 //    testOptions {
 //        junitPlatform {
 //            filters {
@@ -80,7 +92,9 @@ android {
 //        includeEngines('spek2')
 //    }
 //}
-
+//tasks.withType<Test> {
+//    useJUnitPlatform()
+//}
 composeCompiler {
     enableStrongSkippingMode = true
     stabilityConfigurationFile = File(projectDir, "compose_stability.conf")
@@ -125,6 +139,8 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.placeholder.material)
     implementation(libs.accompanist.drawablepainter)
+//    implementation(libs.core.ktx)
+//    implementation(libs.androidx.ui.test.junit4.android)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.compose.ui.test.junit4)
@@ -164,6 +180,13 @@ dependencies {
     testImplementation(libs.kotest.framework.datatest)
     testImplementation(libs.kotest.extensions.android)
     testImplementation(libs.kotest.extensions.koin)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.3")
+    androidTestImplementation("br.com.colman:kotest-runner-android:1.1.1")
+
+//    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.3")
+
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit5)
     testImplementation(libs.turbine)
@@ -172,4 +195,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.kotest.assertions.android)
+//    testImplementation(kotlin("test"))
+    testImplementation("de.mannodermaus.junit5:android-test-compose:1.4.0")
 }

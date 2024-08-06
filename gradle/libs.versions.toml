@@ -20,7 +20,8 @@ navigationCompose = "2.7.7"
 accompanist = "0.30.1"
 desugarJdkLibs = "2.0.4"
 composeLintChecks = "1.3.1"
-#junit = "4.13.2"
+junit = "4.13.2"
+robolectric = "4.13"
 espresso = "3.6.1"
 koin = "3.5.6"
 koinCompose = "1.2.0-Beta5"
@@ -32,6 +33,8 @@ kotestKoin = "1.3.0"
 turbine = "1.1.0"
 mockk = "1.13.12"
 kotestAssertionsAndroid = "1.1.1"
+#coreKtxVersion = "1.6.1"
+#uiTestJunit4Android = "1.6.8"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -70,7 +73,9 @@ accompanist-drawablepainter = { group = "com.google.accompanist", name = "accomp
 accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 compose-lint-checks = { group = "com.slack.lint.compose", name = "compose-lint-checks", version.ref = "composeLintChecks" }
-#junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
@@ -98,3 +103,5 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
 kotest-assertions-android = { group = "br.com.colman", name = "kotest-assertions-android", version.ref = "kotestAssertionsAndroid" }
+#core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+#androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
