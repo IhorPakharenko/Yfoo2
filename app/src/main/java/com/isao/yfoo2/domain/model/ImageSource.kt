@@ -15,9 +15,9 @@ enum class ImageSource {
             THIS_WAIFU_DOES_NOT_EXIST -> "This Waifu Does Not Exist"
         }
 
-    fun getImageUrl(id: String) = when (this) {
+    fun getImageUrl(imageId: String) = when (this) {
         THIS_WAIFU_DOES_NOT_EXIST -> {
-            "https://www.thiswaifudoesnotexist.net/example-$id.jpg"
+            "https://www.thiswaifudoesnotexist.net/example-$imageId.jpg"
         }
     }
 
