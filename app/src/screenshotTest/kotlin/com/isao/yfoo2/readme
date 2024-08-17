@@ -1,0 +1,15 @@
+Generate reference images
+After you set up a test class, you need to generate reference images for each preview. These reference images are used to identify changes later, after you make code changes. To generate reference images for your composable preview screenshot tests, run the following Gradle task:
+
+Linux and macOS: ./gradlew updateDebugScreenshotTest (./gradlew {:module:}update{Variant}ScreenshotTest)
+Windows: gradlew updateDebugScreenshotTest (gradlew {:module:}update{Variant}ScreenshotTest)
+After the task completes, find the reference images in app/src/debug/screenshotTest/reference ({module}/src/{variant}/screenshotTest/reference).
+TLDR: ./gradlew updateDebugScreenshotTest
+
+Generate a test report
+Once the reference images exist, run the validate task to take a new screenshot and compare it with the reference image:
+
+Linux and macOS: ./gradlew validateDebugScreenshotTest (./gradlew {:module:}validate{Variant}ScreenshotTest)
+Windows: gradlew validateDebugScreenshotTest (gradlew {:module:}validate{Variant}ScreenshotTest)
+The verification task creates an HTML report at {module}/build/reports/screenshotTest/preview/{variant}/index.html.
+TLDR: ./gradlew validateDebugScreenshotTest

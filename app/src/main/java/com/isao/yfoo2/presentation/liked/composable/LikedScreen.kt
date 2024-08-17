@@ -50,6 +50,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -311,10 +313,12 @@ private fun ErrorPlaceholder(modifier: Modifier = Modifier) {
 
 @Composable
 private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
+    val loadingContentDescription = stringResource(R.string.loading)
     Box(
         modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .semantics { contentDescription = loadingContentDescription },
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

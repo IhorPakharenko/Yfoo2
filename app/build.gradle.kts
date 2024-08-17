@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -67,6 +68,8 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
 //    tasks.withType<Test> {
 //        useJUnitPlatform()
 //    }
@@ -197,4 +200,7 @@ dependencies {
     androidTestImplementation(libs.kotest.assertions.android)
 //    testImplementation(kotlin("test"))
     testImplementation("de.mannodermaus.junit5:android-test-compose:1.4.0")
+    testImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+
+    screenshotTestImplementation(libs.compose.ui.tooling)
 }
