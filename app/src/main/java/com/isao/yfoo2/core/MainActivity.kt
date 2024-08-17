@@ -109,7 +109,7 @@ class MainActivity : FragmentActivity() {
                     ) { padding ->
                         YfooNavHost(
                             navController = navController,
-                            factories = koinInject<NavigationFactories>().list.toImmutableSet(),
+                            factories = koinInject<NavigationFactories>().list.toImmutableSet(), //TODO remove immutable collections dependency
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(padding),

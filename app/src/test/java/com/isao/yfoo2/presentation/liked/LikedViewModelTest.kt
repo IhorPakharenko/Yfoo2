@@ -105,6 +105,7 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                 }
             }
             When("Images are sorted by default") {
+                //TODO test toggle state
                 Then("Images are shown from newer to older") {
                     subject.uiState.testValue().items shouldContainExactly listOf(
                         Dummies.LikedImage2.toPresentationModel(),
@@ -125,7 +126,7 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                 And("Sorting order is changed again") {
                     subject.acceptIntent(SetSorting(shouldSortAscending = false))
 
-                    Then("Images are shown in descending order") {
+                    Then("Images are shown from newer to older") {
                         subject.uiState.testValue().items shouldContainExactly listOf(
                             Dummies.LikedImage2.toPresentationModel(),
                             Dummies.LikedImage1.toPresentationModel()
@@ -219,6 +220,21 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
             }
         }
     }
+
+    private object Dummies {
+        val LikedImage1 = LikedImage(
+            id = "olderImg",
+            imageId = "1",
+            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
+            dateAdded = Instant.parse("2020-01-01T00:00:00Z")
+        )
+        val LikedImage2 = LikedImage(
+            id = "newerImg",
+            imageId = "2",
+            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
+            dateAdded = Instant.parse("2020-01-01T00:01:00Z")
+        )
+    }
 }
 
 suspend fun <T> StateFlow<T>.testValue(): T {
@@ -232,21 +248,6 @@ fun <T> TestScope.getLatestState(flow: StateFlow<T>): T {
         flow.collect()
     }
     return flow.value
-}
-
-private object Dummies {
-    val LikedImage1 = LikedImage(
-        id = "olderImg",
-        imageId = "1",
-        source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-        dateAdded = Instant.parse("2020-01-01T00:00:00Z")
-    )
-    val LikedImage2 = LikedImage(
-        id = "newerImg",
-        imageId = "2",
-        source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-        dateAdded = Instant.parse("2020-01-01T00:01:00Z")
-    )
 }
 
 /**

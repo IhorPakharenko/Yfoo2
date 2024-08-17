@@ -15,4 +15,5 @@ import androidx.compose.ui.tooling.preview.Preview
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
-annotation class DevicePreviews
+annotation class DevicePreviews //TODO rename to DayNightPreviews. Also replace with the existing annotation:
+//TODO https://developer.android.com/develop/ui/compose/tooling/previews#multipreview-templates
