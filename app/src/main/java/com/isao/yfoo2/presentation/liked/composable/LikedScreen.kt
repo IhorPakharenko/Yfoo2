@@ -67,7 +67,7 @@ import com.isao.yfoo2.presentation.liked.LikedEvent
 import com.isao.yfoo2.presentation.liked.LikedIntent
 import com.isao.yfoo2.presentation.liked.LikedUiState
 import com.isao.yfoo2.presentation.liked.LikedViewModel
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 import kotlinx.coroutines.flow.Flow
 import org.koin.androidx.compose.koinViewModel
 

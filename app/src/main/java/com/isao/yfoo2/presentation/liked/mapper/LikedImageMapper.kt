@@ -1,7 +1,7 @@
-package com.isao.yfoo2.presentation.mapper
+package com.isao.yfoo2.presentation.liked.mapper
 
 import com.isao.yfoo2.domain.model.LikedImage
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
 fun LikedImage.toPresentationModel() = LikedImageDisplayable(
     id = id,

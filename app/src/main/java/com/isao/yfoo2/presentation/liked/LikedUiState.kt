@@ -1,7 +1,7 @@
 package com.isao.yfoo2.presentation.liked
 
 import androidx.compose.runtime.Immutable
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
 @Immutable
 data class LikedUiState(
