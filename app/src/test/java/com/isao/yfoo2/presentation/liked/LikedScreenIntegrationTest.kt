@@ -3,8 +3,8 @@ package com.isao.yfoo2.presentation.liked
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.isao.yfoo2.core.MainActivity
 import com.isao.yfoo2.core.di.appModule
-import com.isao.yfoo2.core.utils.KoinRule
-import com.isao.yfoo2.testsModule
+import com.isao.yfoo2.utils.KoinRule
+import com.isao.yfoo2.utils.testsModule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

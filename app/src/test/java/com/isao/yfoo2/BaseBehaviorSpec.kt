@@ -1,6 +1,7 @@
 package com.isao.yfoo2
 
 import com.isao.yfoo2.core.di.appModule
+import com.isao.yfoo2.utils.testsModule
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.BehaviorSpec

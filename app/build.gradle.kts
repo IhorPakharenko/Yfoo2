@@ -195,12 +195,16 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
+    androidTestImplementation(libs.koin.test)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.kotest.assertions.android)
 //    testImplementation(kotlin("test"))
     testImplementation("de.mannodermaus.junit5:android-test-compose:1.4.0")
     testImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+
+    testImplementation(project(":shared-test"))
+    androidTestImplementation(project(":shared-test"))
 
     screenshotTestImplementation(libs.compose.ui.tooling)
 }

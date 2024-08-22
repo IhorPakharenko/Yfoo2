@@ -1,8 +1,5 @@
 package com.isao.yfoo2.presentation.liked
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
@@ -19,12 +16,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.intent.rule.IntentsRule
 import com.isao.yfoo2.R
-import com.isao.yfoo2.core.utils.KoinRule
-import com.isao.yfoo2.core.utils.getString
-import com.isao.yfoo2.core.utils.printSemantics
 import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.presentation.liked.composable.LikedScreen
 import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.utils.KoinRule
+import com.isao.yfoo2.utils.getString
+import com.isao.yfoo2.utils.hasNoText
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import org.junit.Rule
 import org.junit.Test
@@ -38,13 +35,14 @@ class LikedScreenTestRobolectric {
     val testRule = createComposeRule()
 
     @get:Rule
-    val koinRule = KoinRule(emptyList()) //TODO is it needed?
+    val koinRule = KoinRule(emptyList())
 
     @get:Rule
-    val intentsRule = IntentsRule()
+    val intentsRule = IntentsRule() //TODO use in integration test
 
     val intents = mutableListOf<LikedIntent>()
 
+    // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when loading, show loading placeholder`() {
         testRule.setContent {
@@ -53,6 +51,7 @@ class LikedScreenTestRobolectric {
         testRule.onNodeWithContentDescription(getString(R.string.loading)).assertExists()
     }
 
+    // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when error, show error bar`() {
         testRule.setContent {
@@ -61,6 +60,7 @@ class LikedScreenTestRobolectric {
         testRule.onNodeWithText(getString(R.string.something_went_wrong)).assertExists()
     }
 
+    // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when content available, show all content`() {
         val content = Dummies.generateLikedImageDisplayables(4)
@@ -104,7 +104,6 @@ class LikedScreenTestRobolectric {
         }
         testRule.onAllNodes(hasClickAction())
             .filter(hasNoText())[0].performTouchInput { longClick() }
-        testRule.printSemantics()
         testRule.onNode(
             hasText(getString(R.string.image_by, content[0].source.websiteName))
         ).assertExists()
@@ -163,14 +162,5 @@ class LikedScreenTestRobolectric {
                 source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
             )
         }
-    }
-}
-
-fun hasNoText(): SemanticsMatcher {
-    val propertyName = "${SemanticsProperties.Text.name} + ${SemanticsProperties.EditableText.name}"
-    return SemanticsMatcher("$propertyName contains no text") {
-        val editableText = it.config.getOrNull(SemanticsProperties.EditableText)
-        val text = it.config.getOrNull(SemanticsProperties.Text)
-        editableText == null && text == null
     }
 }

@@ -1,4 +1,4 @@
-package com.isao.yfoo2.core.utils
+package com.isao.yfoo2.utils
 
 import android.app.Application
 import androidx.annotation.StringRes

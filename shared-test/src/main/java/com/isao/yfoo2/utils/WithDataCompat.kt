@@ -1,4 +1,4 @@
-package com.isao.yfoo2.core.utils
+package com.isao.yfoo2.utils
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecGivenContainerScope

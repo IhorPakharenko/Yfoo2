@@ -4,9 +4,6 @@ import app.cash.turbine.Event
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.isao.yfoo2.core.di.appModule
-import com.isao.yfoo2.core.utils.MainDispatcherExtension
-import com.isao.yfoo2.core.utils.TimberConsoleExtension
-import com.isao.yfoo2.core.utils.WhenWithData
 import com.isao.yfoo2.data.local.dao.LikedImageDao
 import com.isao.yfoo2.data.local.mapper.toEntityModel
 import com.isao.yfoo2.data.testdoubles.FakeLikedImageDao
@@ -18,7 +15,10 @@ import com.isao.yfoo2.presentation.liked.LikedIntent.ImageClicked
 import com.isao.yfoo2.presentation.liked.LikedIntent.SetSorting
 import com.isao.yfoo2.presentation.liked.LikedIntent.ViewImageSourceClicked
 import com.isao.yfoo2.presentation.mapper.toPresentationModel
-import com.isao.yfoo2.testsModule
+import com.isao.yfoo2.utils.MainDispatcherExtension
+import com.isao.yfoo2.utils.TimberConsoleExtension
+import com.isao.yfoo2.utils.WhenWithData
+import com.isao.yfoo2.utils.testsModule
 import io.kotest.core.coroutines.backgroundScope
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.TestScope
