@@ -1,4 +1,4 @@
-package com.isao.yfoo2.core.utils
+package com.isao.yfoo2.utils
 
 import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher

@@ -36,6 +36,7 @@ import com.isao.yfoo2.core.navigation.Screen
 import com.isao.yfoo2.core.navigation.YfooNavHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
 import kotlinx.collections.immutable.toImmutableSet
+import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.compose.koinInject
 
 enum class BottomNavigationScreen(
@@ -107,13 +108,17 @@ class MainActivity : FragmentActivity() {
                         // Material3 components handle the insets themselves
                         contentWindowInsets = WindowInsets(0, 0, 0, 0)
                     ) { padding ->
-                        YfooNavHost(
-                            navController = navController,
-                            factories = koinInject<NavigationFactories>().list.toImmutableSet(), //TODO remove immutable collections dependency
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(padding),
-                        )
+                        // Needed as a workaround for some crashes (mostly in tests)
+                        // https://github.com/InsertKoinIO/koin/issues/1557
+                        KoinAndroidContext {
+                            YfooNavHost(
+                                navController = navController,
+                                factories = koinInject<NavigationFactories>().list.toImmutableSet(), //TODO remove immutable collections dependency
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(padding),
+                            )
+                        }
                     }
                 }
             }
