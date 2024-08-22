@@ -96,6 +96,9 @@ fun CardFeed(
                 height = maxHeight
             )
         }
+        //TODO perhaps change this behavior. Right now, if the link to the top item is not working
+        // for any reason, the user can not skip this image and view others, that are possibly working properly.
+        // Maybe allow skipping but not allow liking broken images
         val isTopItemEnabled by remember(topItem) {
             derivedStateOf {
                 topItemPainter?.state is AsyncImagePainter.State.Success
