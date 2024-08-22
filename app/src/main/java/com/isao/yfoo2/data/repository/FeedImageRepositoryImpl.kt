@@ -44,10 +44,7 @@ class FeedImageRepositoryImpl(
     override suspend fun addRandomFeedImage() {
         var insertedRowId: Long
         do {
-            // Currently it is the only source supported in the app as
-            // thishorsedoesnotexist.com and thiscatdoesnotexist.com are both down
-            // and all other options are boring
-            val source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
+            val source = ImageSource.entries.random()
             val imageId = source.getRandomImageId()
             insertedRowId = feedImageDao.saveFeedImage(
                 FeedImage(
