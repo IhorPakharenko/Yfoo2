@@ -7,7 +7,7 @@ import com.isao.yfoo2.core.utils.PreviewMobileScreenSizes
 import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.presentation.liked.LikedUiState
 import com.isao.yfoo2.presentation.liked.composable.LikedScreen
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
 @SuppressLint("ComposePreviewPublic") //TODO turn this check off for this source set
 class LikedScreenScreenshotTest {

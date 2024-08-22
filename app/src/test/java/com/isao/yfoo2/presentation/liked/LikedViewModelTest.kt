@@ -7,14 +7,14 @@ import com.isao.yfoo2.core.di.appModule
 import com.isao.yfoo2.data.local.dao.LikedImageDao
 import com.isao.yfoo2.data.local.mapper.toEntityModel
 import com.isao.yfoo2.data.testdoubles.FakeLikedImageDao
-import com.isao.yfoo2.domain.model.ImageSource
-import com.isao.yfoo2.domain.model.LikedImage
+import com.isao.yfoo2.domain.model.dummy.LikedImageDummies.LikedImage1
+import com.isao.yfoo2.domain.model.dummy.LikedImageDummies.LikedImage2
 import com.isao.yfoo2.presentation.liked.LikedEvent.OpenWebBrowser
 import com.isao.yfoo2.presentation.liked.LikedIntent.DeleteImageClicked
 import com.isao.yfoo2.presentation.liked.LikedIntent.ImageClicked
 import com.isao.yfoo2.presentation.liked.LikedIntent.SetSorting
 import com.isao.yfoo2.presentation.liked.LikedIntent.ViewImageSourceClicked
-import com.isao.yfoo2.presentation.mapper.toPresentationModel
+import com.isao.yfoo2.presentation.liked.mapper.toPresentationModel
 import com.isao.yfoo2.utils.MainDispatcherExtension
 import com.isao.yfoo2.utils.TimberConsoleExtension
 import com.isao.yfoo2.utils.WhenWithData
@@ -44,7 +44,6 @@ import org.koin.test.KoinTest
 import org.koin.test.get
 import org.koin.test.inject
 import org.koin.test.mock.declare
-import java.time.Instant
 
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -88,8 +87,8 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
 
         Given("Existing liked images") {
             val existingImages = listOf(
-                Dummies.LikedImage2,
-                Dummies.LikedImage1,
+                LikedImage2,
+                LikedImage1,
             )
             val existingImagesPresentation = existingImages.map { it.toPresentationModel() }
             get<FakeLikedImageDao>().apply {
@@ -108,8 +107,8 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                 //TODO test toggle state
                 Then("Images are shown from newer to older") {
                     subject.uiState.testValue().items shouldContainExactly listOf(
-                        Dummies.LikedImage2.toPresentationModel(),
-                        Dummies.LikedImage1.toPresentationModel()
+                        LikedImage2.toPresentationModel(),
+                        LikedImage1.toPresentationModel()
                     )
                 }
             }
@@ -118,8 +117,8 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
 
                 Then("Images are shown from older to newer") {
                     getLatestState(subject.uiState).items shouldContainExactly listOf(
-                        Dummies.LikedImage1.toPresentationModel(),
-                        Dummies.LikedImage2.toPresentationModel()
+                        LikedImage1.toPresentationModel(),
+                        LikedImage2.toPresentationModel()
                     )
                 }
 
@@ -128,8 +127,8 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
 
                     Then("Images are shown from newer to older") {
                         subject.uiState.testValue().items shouldContainExactly listOf(
-                            Dummies.LikedImage2.toPresentationModel(),
-                            Dummies.LikedImage1.toPresentationModel()
+                            LikedImage2.toPresentationModel(),
+                            LikedImage1.toPresentationModel()
                         )
                     }
                 }
@@ -194,7 +193,7 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                     }
                 }
 
-                subject.acceptIntent(DeleteImageClicked(Dummies.LikedImage1.toPresentationModel()))
+                subject.acceptIntent(DeleteImageClicked(LikedImage1.toPresentationModel()))
 
                 Then("The image is not deleted and the error is ignored") {
                     val state = subject.uiState.testValue()
@@ -220,22 +219,9 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
             }
         }
     }
-
-    private object Dummies {
-        val LikedImage1 = LikedImage(
-            id = "olderImg",
-            imageId = "1",
-            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-            dateAdded = Instant.parse("2020-01-01T00:00:00Z")
-        )
-        val LikedImage2 = LikedImage(
-            id = "newerImg",
-            imageId = "2",
-            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-            dateAdded = Instant.parse("2020-01-01T00:01:00Z")
-        )
-    }
 }
+
+//TODO extract functions below to utils
 
 suspend fun <T> StateFlow<T>.testValue(): T {
     test { cancelAndIgnoreRemainingEvents() }

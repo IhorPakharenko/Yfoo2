@@ -24,7 +24,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.isao.yfoo2.core.utils.debugPlaceholder
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
 
 @OptIn(ExperimentalFoundationApi::class)

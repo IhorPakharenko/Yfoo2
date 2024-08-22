@@ -1,6 +1,6 @@
 package com.isao.yfoo2.presentation.liked
 
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
 sealed class LikedIntent {
 

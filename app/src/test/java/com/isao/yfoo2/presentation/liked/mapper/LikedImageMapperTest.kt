@@ -1,8 +1,8 @@
-package com.isao.yfoo2.presentation.mapper
+package com.isao.yfoo2.presentation.liked.mapper
 
 import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.domain.model.LikedImage
-import com.isao.yfoo2.presentation.model.LikedImageDisplayable
+import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import java.time.Instant
