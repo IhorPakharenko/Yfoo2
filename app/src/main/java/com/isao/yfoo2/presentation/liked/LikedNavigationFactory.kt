@@ -1,5 +1,3 @@
-@file:OptIn(KoinExperimentalAPI::class)
-
 package com.isao.yfoo2.presentation.liked
 
 import androidx.navigation.NavGraphBuilder
@@ -7,7 +5,6 @@ import androidx.navigation.compose.composable
 import com.isao.yfoo2.core.BottomNavigationScreen
 import com.isao.yfoo2.core.navigation.NavigationFactory
 import com.isao.yfoo2.presentation.liked.composable.LikedRoute
-import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.annotation.Single
 
 @Single

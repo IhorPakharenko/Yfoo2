@@ -185,6 +185,7 @@ dependencies {
     testImplementation(libs.kotest.extensions.koin)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    //TODO replace with library catalog declaration (here and in other places)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.10.3")
     androidTestImplementation("br.com.colman:kotest-runner-android:1.1.1")
 

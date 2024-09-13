@@ -47,7 +47,7 @@ class LikedScreenIntegrationTest : KoinTest {
 
     @get:Rule
     val koinRule = KoinRule(appModule + testsModule + module {
-        single { ApplicationProvider.getApplicationContext<Context>() }
+        single { ApplicationProvider.getApplicationContext<Context>() } //TODO extract as a separate module
     })
 
     @get:Rule
