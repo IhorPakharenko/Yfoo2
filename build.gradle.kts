@@ -7,6 +7,4 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
-
-    //TODO ktlint is not used
 }

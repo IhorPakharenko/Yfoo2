@@ -1,5 +1,7 @@
 [versions]
 androidGradlePlugin = "8.5.1"
+androidTestCompose = "1.4.0"
+junitVintageEngine = "5.10.3"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.22"
 junit5 = "1.10.0.0"
@@ -9,7 +11,6 @@ activityCompose = "1.9.1"
 compose = "1.6.8"
 material3 = "1.2.1"
 material = "1.6.8"
-kotlinxCollectionsImmutable = "0.3.7"
 coil = "2.6.0"
 timber = "5.0.1"
 room = "2.6.1"
@@ -50,7 +51,9 @@ screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"
 
 
 [libraries]
+android-test-compose = { module = "de.mannodermaus.junit5:android-test-compose", version.ref = "androidTestCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -60,7 +63,8 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
 
-kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junitVintageEngine" }
+kotest-runner-android = { module = "br.com.colman:kotest-runner-android", version.ref = "kotestAssertionsAndroid" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }

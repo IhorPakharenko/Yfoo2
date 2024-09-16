@@ -11,22 +11,22 @@ import org.koin.core.annotation.Single
 @Single(binds = [AppDatabase::class])
 class FakeAppDatabase : AppDatabase() {
     override fun feedImageDao(): FeedImageDao {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override fun likedImageDao(): LikedImageDao {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override fun clearAllTables() {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override fun createInvalidationTracker(): InvalidationTracker {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override fun createOpenHelper(config: DatabaseConfiguration): SupportSQLiteOpenHelper {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 }

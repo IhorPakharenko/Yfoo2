@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -23,6 +24,7 @@ import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import com.isao.yfoo2.core.utils.CatPreviewPlaceholder
 import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
@@ -37,6 +39,10 @@ fun LikedItem(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (LocalInspectionMode.current) {
+        CatPreviewPlaceholder()
+        return
+    }
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(item.imageUrl)

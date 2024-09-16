@@ -18,10 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import com.isao.yfoo2.core.utils.DevicePreviews
 import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
@@ -46,7 +46,7 @@ fun FeedScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    //TODO move the card above the app bar
+    //TODO display the card above the app bar
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -78,7 +78,7 @@ fun FeedScreen(
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun FeedScreenPreview() {
     Yfoo2Theme {
@@ -100,7 +100,7 @@ private fun FeedScreenPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun FeedScreenLoadingPreview() {
     Yfoo2Theme {
@@ -113,7 +113,7 @@ private fun FeedScreenLoadingPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun FeedScreenNoItemsPreview() {
     Yfoo2Theme {
@@ -124,7 +124,7 @@ private fun FeedScreenNoItemsPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun FeedScreenErrorPreview() {
     Yfoo2Theme {

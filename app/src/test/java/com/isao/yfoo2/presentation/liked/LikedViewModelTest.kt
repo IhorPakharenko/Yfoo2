@@ -49,13 +49,7 @@ import org.koin.test.mock.declare
 @OptIn(ExperimentalStdlibApi::class)
 class LikedViewModelTest : BehaviorSpec(), KoinTest {
 
-    //TODO tests might be run via robolectric
-    // (RobolectricExtension.runTest, RobolectricExtension.intercept)
-    // Or is this normal?
-
     override fun extensions() = listOf(
-        // TODO missing fake dependencies when passing a single combined module
-        //  containing these 3 modules. Investigate
         KoinExtension(
             modules = appModule + defaultModule + testsModule,
             mode = KoinLifecycleMode.Root

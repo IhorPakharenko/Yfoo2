@@ -35,7 +35,6 @@ import com.isao.yfoo2.core.navigation.NavigationFactories
 import com.isao.yfoo2.core.navigation.Screen
 import com.isao.yfoo2.core.navigation.YfooNavHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import kotlinx.collections.immutable.toImmutableSet
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.compose.koinInject
 
@@ -113,7 +112,7 @@ class MainActivity : FragmentActivity() {
                         KoinAndroidContext {
                             YfooNavHost(
                                 navController = navController,
-                                factories = koinInject<NavigationFactories>().list.toImmutableSet(), //TODO remove immutable collections dependency
+                                factories = koinInject<NavigationFactories>().list,
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .padding(padding),

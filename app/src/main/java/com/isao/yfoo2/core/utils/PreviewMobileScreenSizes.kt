@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 /**
  * A MultiPreview annotation for displaying a @[Composable] method using the screen sizes of four different reference devices.
  */
-@SuppressLint("ComposePreviewNaming") //TODO turn this check off, the rules have changed
+@SuppressLint("ComposePreviewNaming")
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.ANNOTATION_CLASS,

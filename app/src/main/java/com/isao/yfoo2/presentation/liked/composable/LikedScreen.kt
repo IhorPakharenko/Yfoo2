@@ -1,8 +1,3 @@
-@file:OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
-)
-
 package com.isao.yfoo2.presentation.liked.composable
 
 import androidx.compose.animation.Crossfade
@@ -24,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -32,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -55,13 +50,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.extensions.collectWithLifecycle
 import com.isao.yfoo2.core.theme.Yfoo2Theme
-import com.isao.yfoo2.core.utils.DevicePreviews
 import com.isao.yfoo2.domain.model.ImageSource
 import com.isao.yfoo2.presentation.liked.LikedEvent
 import com.isao.yfoo2.presentation.liked.LikedIntent
@@ -329,7 +324,7 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun LikedScreenPreview() {
     Yfoo2Theme {
@@ -348,7 +343,7 @@ private fun LikedScreenPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun LikedScreenLoadingPreview() {
     Yfoo2Theme {
@@ -361,7 +356,7 @@ private fun LikedScreenLoadingPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun LikedScreenNoItemsPreview() {
     Yfoo2Theme {
@@ -372,7 +367,7 @@ private fun LikedScreenNoItemsPreview() {
     }
 }
 
-@DevicePreviews
+@PreviewLightDark
 @Composable
 private fun LikedScreenErrorPreview() {
     Yfoo2Theme {

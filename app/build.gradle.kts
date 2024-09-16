@@ -70,34 +70,13 @@ android {
     }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
-//    tasks.withType<Test> {
-//        useJUnitPlatform()
-//    }
-//    testOptions {
-//        junitPlatform {
-//            filters {
-//                engines {
-//                    include("spek2")
-//                }
-//            }
-//        }
-//        unitTests.all {
-//            useJUnitPlatform()
-//            testLogging {
-//                events("passed", "skipped", "failed")
-//            }
-//        }
-//    }
+    lint {
+        // Highlighted issue is no longer the case
+        // with the introduction of stabilityConfigurationFile
+        disable += "ComposeUnstableCollections"
+    }
 }
-//TODO spek
-//test {
-//    useJUnitPlatform {
-//        includeEngines('spek2')
-//    }
-//}
-//tasks.withType<Test> {
-//    useJUnitPlatform()
-//}
+
 composeCompiler {
     enableStrongSkippingMode = true
     stabilityConfigurationFile = File(projectDir, "compose_stability.conf")
@@ -142,8 +121,6 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.placeholder.material)
     implementation(libs.accompanist.drawablepainter)
-//    implementation(libs.core.ktx)
-//    implementation(libs.androidx.ui.test.junit4.android)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.compose.ui.test.junit4)
@@ -168,13 +145,11 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.timber)
-    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.navigation.compose)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     lintChecks(libs.compose.lint.checks)
 
     // Testing Libraries
-//    testImplementation(libs.junit)
     testImplementation(libs.spek.dsl.jvm)
     testImplementation(libs.spek.runner.junit5)
     testImplementation(libs.kotlin.reflect)
@@ -185,12 +160,8 @@ dependencies {
     testImplementation(libs.kotest.extensions.koin)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
-    //TODO replace with library catalog declaration (here and in other places)
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.3")
-    androidTestImplementation("br.com.colman:kotest-runner-android:1.1.1")
-
-//    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.3")
-
+    testImplementation(libs.junit.vintage.engine)
+    androidTestImplementation(libs.kotest.runner.android)
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit5)
     testImplementation(libs.turbine)
@@ -200,12 +171,11 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.kotest.assertions.android)
-//    testImplementation(kotlin("test"))
-    testImplementation("de.mannodermaus.junit5:android-test-compose:1.4.0")
-    testImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    testImplementation(libs.android.test.compose)
+    testImplementation(libs.androidx.espresso.intents)
+
+    screenshotTestImplementation(libs.compose.ui.tooling)
 
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
-
-    screenshotTestImplementation(libs.compose.ui.tooling)
 }

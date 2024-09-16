@@ -7,16 +7,21 @@ The architecture was inspired by the [Android Kotlin starter project](https://gi
 <img src="readme/feed.gif" alt="Feed" width="240">
 
 ### Description
-This application showcases a custom Tinder-like UI designed for viewing an endless list of images. Images that are liked can subsequently be accessed on a separate screen. Utilizes images from [This Waifu Does Not Exist](https://www.thiswaifudoesnotexist.net/). Adopts offline-first approach. Supports light/dark mode and dynamic color from Material 3.
+
+This application showcases a custom Tinder-like UI designed for viewing an endless list of images as
+a stack of swipeable cards. Images that are liked can subsequently be accessed on a separate screen.
+Utilizes images from [This Waifu Does Not Exist](https://www.thiswaifudoesnotexist.net/)
+and [These Cats Do Not Exist](https://thesecatsdonotexist.com/). Adopts offline-first approach.
+Supports light/dark mode and dynamic color from Material 3.
 
 ### Libraries/concepts used
 
 * Kotlin Coroutines & Kotlin Flow
-* Hilt
+* ~~Hilt~~ Koin
 * Jetpack: Navigation, Room and Lifecycle
 * Coil image loading library
 * Material 3
 * Accompanist: Navigation animation, Drawable painter and Placeholder
-* KtLint and Detekt linters
+* Compose lint checks by Slack
 
 <img src="readme/feed_day.png" alt="Feed" width="240"> <img src="readme/feed_night.png" alt="Feed with night mode" width="240"> <img src="readme/liked_day.png" alt="Liked" width="240"> <img src="readme/liked_day_2.png" alt="Liked" width="240"> <img src="readme/liked_day_3.png" alt="Liked" width="240"> <img src="readme/liked_night.png" alt="Liked with night mode" width="240">

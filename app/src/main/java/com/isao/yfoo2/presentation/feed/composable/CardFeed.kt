@@ -240,6 +240,8 @@ private fun getButtonScale(dismissProgress: Float): Float {
     val minScale = 0.8f
     val maxScale = 1f
 
+    if (dismissProgress.isNaN()) return minScale // Dismiss progress has not been initialized yet
+
     return when {
         dismissProgress < minProgress -> minScale
         dismissProgress > maxProgress -> maxScale

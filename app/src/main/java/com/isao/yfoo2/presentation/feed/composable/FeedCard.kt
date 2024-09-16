@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
@@ -27,6 +28,7 @@ import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import com.isao.yfoo2.core.utils.CatPreviewPlaceholder
 import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
 
@@ -45,13 +47,17 @@ fun FeedCard(
             return@Card
         }
 
+        if (LocalInspectionMode.current) {
+            CatPreviewPlaceholder(Modifier.fillMaxSize())
+            return@Card
+        }
+
         when (painter.state) {
             is AsyncImagePainter.State.Success -> {
                 Image(
                     painter = painter,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
             }

@@ -6,18 +6,18 @@ import kotlinx.coroutines.flow.Flow
 
 class FakeFeedImageDao : FeedImageDao {
     override fun getFeedImages(): Flow<List<FeedImageCached>> {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override fun getFeedImage(id: String): Flow<FeedImageCached> {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override suspend fun saveFeedImage(item: FeedImageCached): Long {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 
     override suspend fun deleteFeedImage(id: String) {
-        TODO("Not yet implemented")
+        throw NotImplementedError() // Stub
     }
 }
