@@ -80,7 +80,7 @@ fun FeedScreen(
 
 @DevicePreviews
 @Composable
-fun FeedScreenPreview() {
+private fun FeedScreenPreview() {
     Yfoo2Theme {
         FeedScreen(
             uiState = FeedUiState(
@@ -102,7 +102,7 @@ fun FeedScreenPreview() {
 
 @DevicePreviews
 @Composable
-fun FeedScreenLoadingPreview() {
+private fun FeedScreenLoadingPreview() {
     Yfoo2Theme {
         FeedScreen(
             uiState = FeedUiState(
@@ -115,7 +115,7 @@ fun FeedScreenLoadingPreview() {
 
 @DevicePreviews
 @Composable
-fun FeedScreenNoItemsPreview() {
+private fun FeedScreenNoItemsPreview() {
     Yfoo2Theme {
         FeedScreen(
             uiState = FeedUiState(),
@@ -126,7 +126,7 @@ fun FeedScreenNoItemsPreview() {
 
 @DevicePreviews
 @Composable
-fun FeedScreenErrorPreview() {
+private fun FeedScreenErrorPreview() {
     Yfoo2Theme {
         FeedScreen(
             uiState = FeedUiState(

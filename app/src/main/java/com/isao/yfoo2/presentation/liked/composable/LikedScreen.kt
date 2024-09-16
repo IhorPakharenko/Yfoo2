@@ -331,7 +331,7 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
 
 @DevicePreviews
 @Composable
-fun LikedScreenPreview() {
+private fun LikedScreenPreview() {
     Yfoo2Theme {
         LikedScreen(
             uiState = LikedUiState(
@@ -350,7 +350,7 @@ fun LikedScreenPreview() {
 
 @DevicePreviews
 @Composable
-fun LikedScreenLoadingPreview() {
+private fun LikedScreenLoadingPreview() {
     Yfoo2Theme {
         LikedScreen(
             uiState = LikedUiState(
@@ -363,7 +363,7 @@ fun LikedScreenLoadingPreview() {
 
 @DevicePreviews
 @Composable
-fun LikedScreenNoItemsPreview() {
+private fun LikedScreenNoItemsPreview() {
     Yfoo2Theme {
         LikedScreen(
             uiState = LikedUiState(),
@@ -374,7 +374,7 @@ fun LikedScreenNoItemsPreview() {
 
 @DevicePreviews
 @Composable
-fun LikedScreenErrorPreview() {
+private fun LikedScreenErrorPreview() {
     Yfoo2Theme {
         LikedScreen(
             uiState = LikedUiState(
