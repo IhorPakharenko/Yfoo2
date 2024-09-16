@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -53,12 +54,12 @@ class DismissibleState(
     private val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
     internal var directions: Set<DismissDirection> by mutableStateOf(emptySet())
-    internal var containerWidth: Float by mutableStateOf(0f)
-    internal var containerHeight: Float by mutableStateOf(0f)
-    internal var maxRotationZ: Float by mutableStateOf(0f)
-    internal var velocityThreshold: Float by mutableStateOf(0f)
-    internal var minHorizontalProgressThreshold: Float by mutableStateOf(0f)
-    internal var minVerticalProgressThreshold: Float by mutableStateOf(0f)
+    internal var containerWidth: Float by mutableFloatStateOf(0f)
+    internal var containerHeight: Float by mutableFloatStateOf(0f)
+    internal var maxRotationZ: Float by mutableFloatStateOf(0f)
+    internal var velocityThreshold: Float by mutableFloatStateOf(0f)
+    internal var minHorizontalProgressThreshold: Float by mutableFloatStateOf(0f)
+    internal var minVerticalProgressThreshold: Float by mutableFloatStateOf(0f)
 
     val value get() = offset.value
     val targetValue get() = offset.targetValue

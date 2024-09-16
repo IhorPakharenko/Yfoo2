@@ -115,8 +115,6 @@ fun CardFeed(
                     emptySet()
                 },
                 enabled = isTopItemEnabled,
-                containerWidth = maxWidth,
-                containerHeight = maxHeight,
             )
         )
 
