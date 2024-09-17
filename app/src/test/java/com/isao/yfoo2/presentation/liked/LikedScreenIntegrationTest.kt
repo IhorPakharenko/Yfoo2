@@ -1,6 +1,5 @@
 package com.isao.yfoo2.presentation.liked
 
-import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasClickAction
@@ -10,13 +9,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
 import androidx.test.espresso.intent.rule.IntentsRule
 import com.isao.yfoo2.R
 import com.isao.yfoo2.core.di.appModule
+import com.isao.yfoo2.core.utils.robolectricContextModule
 import com.isao.yfoo2.data.local.dao.LikedImageDao
 import com.isao.yfoo2.data.local.mapper.toEntityModel
 import com.isao.yfoo2.domain.model.LikedImage
@@ -35,7 +34,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 import org.robolectric.RobolectricTestRunner
@@ -46,9 +44,7 @@ class LikedScreenIntegrationTest : KoinTest {
     val testRule = createComposeRule()
 
     @get:Rule
-    val koinRule = KoinRule(appModule + testsModule + module {
-        single { ApplicationProvider.getApplicationContext<Context>() } //TODO extract as a separate module
-    })
+    val koinRule = KoinRule(appModule + testsModule + robolectricContextModule)
 
     @get:Rule
     val intentsRule = IntentsRule()

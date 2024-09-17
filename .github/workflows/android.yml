@@ -43,10 +43,10 @@ jobs:
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Run unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Run screenshot tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew validateDebugScreenshotTest --stacktrace
 
       # Sample taken from https://github.com/android/compose-samples/blob/main/.github/workflows/Jetchat.yaml
       # TODO: uncomment when instrumentation tests are required

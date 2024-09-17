@@ -62,10 +62,11 @@ fun CardFeed(
 
         val topItemState = rememberDismissibleState(
             onDismiss = { direction ->
+                topItem ?: return@rememberDismissibleState
                 onIntent(
                     when (direction) {
-                        DismissDirection.Start -> FeedIntent.Dislike(topItem!!) //TODO nullability
-                        DismissDirection.End -> FeedIntent.Like(topItem!!) //TODO nullability
+                        DismissDirection.Start -> FeedIntent.Dislike(topItem)
+                        DismissDirection.End -> FeedIntent.Like(topItem)
                         else -> throw IllegalArgumentException()
                     }
                 )
