@@ -9,7 +9,8 @@ import com.isao.yfoo2.presentation.liked.LikedUiState
 import com.isao.yfoo2.presentation.liked.composable.LikedScreen
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
-@SuppressLint("ComposePreviewPublic") //TODO turn this check off for this source set
+//TODO turn these checks off for this source set
+@SuppressLint("ComposePreviewPublic", "ComposeUnstableReceiver")
 //TODO setup screenshot testing for CI
 class LikedScreenScreenshotTest {
 
