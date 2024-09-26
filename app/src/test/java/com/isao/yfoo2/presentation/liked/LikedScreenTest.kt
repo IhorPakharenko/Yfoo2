@@ -81,16 +81,6 @@ class LikedScreenTest {
         intents shouldHaveSingleElement { it is LikedIntent.SetSorting }
     }
 
-    // An integration test already covers this case, so this test is likely unnecessary
-    @Test
-    fun `when clicking item, send open browser with image intent`() {
-        val content = generateLikedImageDisplayables(4)
-        testRule.setUpComposable(state = LikedUiState(items = content))
-        testRule.onAllNodes(hasClickAction()).filter(hasNoText())[0].performClick()
-
-        intents shouldHaveSingleElement LikedIntent.ImageClicked(content[0])
-    }
-
     @Test
     fun `when long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
@@ -105,30 +95,6 @@ class LikedScreenTest {
             hasClickAction()
                     and hasText(getString(R.string.delete))
         ).assertExists()
-    }
-
-    // An integration test already covers this case, so this test is likely unnecessary
-    @Test
-    fun `given dropdown open, when 'image by' clicked, send open browser with image source intent`() {
-        val content = generateLikedImageDisplayables(4)
-        testRule.setUpComposable(state = LikedUiState(items = content))
-        testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
-        testRule.onNode(
-            hasText(getString(R.string.image_by, content[0].source.websiteName))
-        ).performClick()
-
-        intents shouldHaveSingleElement LikedIntent.ViewImageSourceClicked(content[0])
-    }
-
-    // An integration test already covers this case, so this test is likely unnecessary
-    @Test
-    fun `given dropdown open, when delete clicked, send delete item intent`() {
-        val content = generateLikedImageDisplayables(4)
-        testRule.setUpComposable(state = LikedUiState(items = content))
-        testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
-        testRule.onNode(hasText(getString(R.string.delete))).performClick()
-
-        intents shouldHaveSingleElement LikedIntent.DeleteImageClicked(content[0])
     }
 
     private fun ComposeContentTestRule.setUpComposable(

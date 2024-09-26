@@ -11,7 +11,6 @@ import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
 
 //TODO turn these checks off for this source set
 @SuppressLint("ComposePreviewPublic", "ComposeUnstableReceiver")
-//TODO setup screenshot testing for CI
 class LikedScreenScreenshotTest {
 
     @PreviewMobileScreenSizes
