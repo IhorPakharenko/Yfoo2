@@ -91,7 +91,7 @@ fun CardFeed(
         }
 
         val topItemPainter = topItem?.imageUrl?.let { url ->
-            FeedCardDefaults.rememberAsyncImagePainter(
+            FeedCardDefaults.rememberRetryingAsyncImagePainter(
                 imageUrl = url,
                 width = maxWidth,
                 height = maxHeight
