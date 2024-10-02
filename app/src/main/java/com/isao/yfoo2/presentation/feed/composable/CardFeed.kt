@@ -54,11 +54,9 @@ fun CardFeed(
     BoxWithConstraints(modifier.fillMaxSize()) {
         val scope = rememberCoroutineScope()
 
-        val notDismissedItems = uiState.items.filterNot { it.isDismissed }
-
-        val preloadedItem = notDismissedItems.getOrNull(2)
-        val backgroundItem = notDismissedItems.getOrNull(1)
-        val topItem = notDismissedItems.getOrNull(0)
+        val preloadedItem = uiState.items.getOrNull(2)
+        val backgroundItem = uiState.items.getOrNull(1)
+        val topItem = uiState.items.getOrNull(0)
 
         val topItemState = rememberDismissibleState(
             onDismiss = { direction ->

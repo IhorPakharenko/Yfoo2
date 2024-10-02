@@ -34,7 +34,7 @@ class FeedViewModel(
         partialState: FeedPartialState
     ): FeedUiState = when (partialState) {
         is FeedPartialState.ItemsFetched -> previousState.copy(
-            items = (previousState.items + partialState.items).distinctBy { it.id },
+            items = partialState.items,
             isLoading = false,
             isError = false
         )
@@ -42,14 +42,9 @@ class FeedViewModel(
         FeedPartialState.ItemsLoading -> previousState.copy(
             isLoading = true
         )
-
         is FeedPartialState.ItemDismissed -> previousState.copy(
-            items = previousState.items.map { item ->
-                if (item.id == partialState.item.id) {
-                    item.copy(isDismissed = true)
-                } else {
-                    item
-                }
+            items = previousState.items.filterNot { item ->
+                item.id == partialState.item.id
             },
             isLoading = false,
             isError = false

@@ -3,6 +3,7 @@ package com.isao.yfoo2.presentation.feed.composable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -34,7 +35,7 @@ fun FeedRoute(
     FeedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
     uiState: FeedUiState,
@@ -87,8 +88,7 @@ private fun FeedScreenPreview() {
                         imageId = "",
                         source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
                         imageUrl = "",
-                        sourceUrl = "",
-                        isDismissed = false
+                        sourceUrl = ""
                     )
                 }
             ),
