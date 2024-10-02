@@ -2,9 +2,9 @@ name: Android CI / CD
 
 on:
   push:
-    branches: [ "master, temp_debug_branch" ]
+    branches: [ "master", "temp_debug_branch" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "temp_debug_branch" ]
 
 jobs:
   build:
