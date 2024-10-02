@@ -20,6 +20,7 @@ import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayableDummies.gene
 import com.isao.yfoo2.utils.KoinRule
 import com.isao.yfoo2.utils.getString
 import com.isao.yfoo2.utils.hasNoText
+import com.isao.yfoo2.utils.printSemantics
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import org.junit.Rule
 import org.junit.Test
@@ -87,6 +88,7 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
+        testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
         testRule.onNode(
             hasText(getString(R.string.image_by, content[0].source.websiteName))
