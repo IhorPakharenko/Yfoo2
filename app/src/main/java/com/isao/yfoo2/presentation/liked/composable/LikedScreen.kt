@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
@@ -172,6 +170,9 @@ fun ItemsAvailableContent(
         items(5) {
             Text("INTERNAL Text number $it")
         }
+        items(uiState.items) {
+            Text("INTERNAL(ER) Text number $it")
+        }
         items(
             uiState.items,
             key = { it.id }
@@ -181,8 +182,8 @@ fun ItemsAvailableContent(
             }
             Box(
                 Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
+//                    .fillMaxWidth()
+//                    .aspectRatio(1f)
 //                    .animateItemPlacement()
             ) {
 //                val isSelected by remember { derivedStateOf { selectedItem == item } }
@@ -196,8 +197,8 @@ fun ItemsAvailableContent(
 //                        selectedItem = item
                     },
                     modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center)
+//                        .fillMaxSize()
+//                        .align(Alignment.Center)
 //                        .graphicsLayer {
 //                            scaleX = sizeFraction
 //                            scaleY = sizeFraction
