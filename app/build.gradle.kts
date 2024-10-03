@@ -68,6 +68,11 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    tasks.withType<Test> {
+        testLogging {
+            events("standardOut")
+        }
+    }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     lint {
