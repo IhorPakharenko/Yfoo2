@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,12 +47,12 @@ import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
-fun CardFeed(
+fun FeedScreenContent(
     uiState: FeedUiState,
     onIntent: (FeedIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BoxWithConstraints(modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier) {
         val scope = rememberCoroutineScope()
 
         val preloadedItem = uiState.items.getOrNull(2)
@@ -74,25 +75,32 @@ fun CardFeed(
             }
         )
 
+        val horizontalCardPadding = 16.dp
+        val verticalCardPadding = 32.dp
+        val cardPadding = PaddingValues(horizontal = 16.dp, vertical = 32.dp)
+        val cardImageWidth = maxWidth - horizontalCardPadding * 2
+        val cardImageHeight = maxHeight - verticalCardPadding * 2
+
         PreloadFeedItem(
             item = preloadedItem,
-            width = maxWidth,
-            height = maxHeight
+            width = cardImageWidth,
+            height = cardImageHeight
         )
 
         if (backgroundItem != null) {
             FeedCard(
                 imageUrl = backgroundItem.imageUrl,
-                width = maxWidth,
-                height = maxHeight,
+                width = cardImageWidth,
+                height = cardImageHeight,
+                Modifier.padding(cardPadding)
             )
         }
 
         val topItemPainter = topItem?.imageUrl?.let { url ->
             FeedCardDefaults.rememberRetryingAsyncImagePainter(
                 imageUrl = url,
-                width = maxWidth,
-                height = maxHeight
+                width = cardImageWidth,
+                height = cardImageHeight
             )
         }
         //TODO perhaps change this behavior. Right now, if the link to the top item is not working
@@ -106,15 +114,17 @@ fun CardFeed(
 
         FeedCard(
             painter = topItemPainter,
-            modifier = Modifier.dismissible(
-                state = topItemState,
-                directions = if (isTopItemEnabled) {
-                    setOf(DismissDirection.Start, DismissDirection.End)
-                } else {
-                    emptySet()
-                },
-                enabled = isTopItemEnabled,
-            )
+            modifier = Modifier
+                .padding(cardPadding)
+                .dismissible(
+                    state = topItemState,
+                    directions = if (isTopItemEnabled) {
+                        setOf(DismissDirection.Start, DismissDirection.End)
+                    } else {
+                        emptySet()
+                    },
+                    enabled = isTopItemEnabled,
+                )
         )
 
         FeedButtons(

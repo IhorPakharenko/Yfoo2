@@ -3,7 +3,6 @@ package com.isao.yfoo2.presentation.feed.composable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Card
@@ -26,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
@@ -47,11 +45,7 @@ fun FeedCard(
     painter: AsyncImagePainter?,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        Modifier
-            .padding(horizontal = 16.dp, vertical = 32.dp)
-            .then(modifier)
-    ) {
+    Card(modifier) {
         if (painter == null) {
             EmptyPlaceholder()
             return@Card
