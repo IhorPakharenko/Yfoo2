@@ -68,7 +68,7 @@ class LikedScreenTest {
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when content available, show all content`() {
-        val content = generateLikedImageDisplayables(4)
+        val content = generateLikedImageDisplayables(2)
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
