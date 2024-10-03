@@ -74,7 +74,11 @@ fun LikedItem(
         )
     } else {
         Box(
-            modifier = modifier,
+            modifier = modifier
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
