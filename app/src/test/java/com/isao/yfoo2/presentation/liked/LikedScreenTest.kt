@@ -50,6 +50,8 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isLoading = true), onIntent = {})
         }
+        testRule.waitForIdle()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
         testRule.onNodeWithContentDescription(getString(R.string.loading)).assertExists()
     }
@@ -60,6 +62,8 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isError = true), onIntent = {})
         }
+        testRule.waitForIdle()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
 
         testRule.onNodeWithText(getString(R.string.something_went_wrong)).assertExists()
@@ -72,6 +76,8 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
+        testRule.waitForIdle()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
 
         testRule.onNode(hasScrollAction())
@@ -88,6 +94,8 @@ class LikedScreenTest {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
         // Sorting button
+        testRule.waitForIdle()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
 
         testRule.onNode(hasClickAction() and hasText(getString(R.string.added))).performClick()
