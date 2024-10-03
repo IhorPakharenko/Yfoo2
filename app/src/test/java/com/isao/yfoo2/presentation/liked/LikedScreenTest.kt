@@ -30,7 +30,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(qualifiers = "xxhdpi")
+@Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
 class LikedScreenTest {
     @get:Rule
     val testRule = createComposeRule()
@@ -93,7 +93,8 @@ class LikedScreenTest {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
         testRule.printSemantics()
-        testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
+        testRule.waitForIdle()
+//        testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
 //        testRule.waitForIdle()
         testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
