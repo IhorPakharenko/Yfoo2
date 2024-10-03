@@ -1,5 +1,6 @@
 package com.isao.yfoo2.presentation.liked
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
@@ -82,13 +83,15 @@ class LikedScreenTest {
         intents shouldHaveSingleElement { it is LikedIntent.SetSorting }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun `when long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
-        testRule.waitForIdle()
+        testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
+//        testRule.waitForIdle()
         testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
         testRule.onNode(
