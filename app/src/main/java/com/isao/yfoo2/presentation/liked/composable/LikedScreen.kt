@@ -213,13 +213,13 @@ fun ItemsAvailableContent(
                             scaleY = sizeFraction
                         }
                 )
-//                ImageActionsPopup(
-//                    expanded = isSelected,
-//                    item = item,
-//                    onDismissRequest = { selectedItem = null },
-//                    onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
-//                    onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
-//                )
+                ImageActionsPopup(
+                    expanded = isSelected,
+                    item = item,
+                    onDismissRequest = { selectedItem = null },
+                    onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
+                    onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
+                )
             }
             println("Item ${item} done")
         }

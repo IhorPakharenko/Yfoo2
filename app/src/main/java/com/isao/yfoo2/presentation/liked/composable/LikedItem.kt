@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import com.isao.yfoo2.core.utils.CatPreviewPlaceholder
 import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
@@ -62,11 +65,11 @@ fun LikedItem(
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
+                )
+                .placeholder(
+                    visible = painter.state is AsyncImagePainter.State.Loading,
+                    highlight = PlaceholderHighlight.shimmer()
                 ),
-//                .placeholder(
-//                    visible = painter.state is AsyncImagePainter.State.Loading,
-//                    highlight = PlaceholderHighlight.shimmer()
-//                )
             contentScale = ContentScale.Crop,
         )
     } else {
@@ -77,7 +80,12 @@ fun LikedItem(
             Icon(
                 imageVector = Icons.Default.ErrorOutline,
                 contentDescription = "error",
-                modifier = Modifier.fillMaxSize(0.5f),
+                modifier = Modifier
+                    .fillMaxSize(0.5f)
+                    .combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                    ),
                 tint = MaterialTheme.colorScheme.error
             )
         }
