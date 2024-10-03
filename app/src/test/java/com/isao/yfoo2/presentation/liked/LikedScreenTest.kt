@@ -84,7 +84,7 @@ class LikedScreenTest {
     }
 
     @Test
-    fun `when content available, sorting button is available`() {
+    fun `bwhen content available, sorting button is available`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
         // Sorting button
