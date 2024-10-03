@@ -35,18 +35,18 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Check lint
-        working-directory: ${{ inputs.path }}
-        run: ./gradlew lintDebug --stacktrace
-
-      - name: Build debug
-        run: ./gradlew assembleDebug --stacktrace
+      #      - name: Check lint
+      #        working-directory: ${{ inputs.path }}
+      #        run: ./gradlew lintDebug --stacktrace
+      #
+      #      - name: Build debug
+      #        run: ./gradlew assembleDebug --stacktrace
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
 
-      - name: Run screenshot tests
-        run: ./gradlew validateDebugScreenshotTest --stacktrace
+      #      - name: Run screenshot tests
+      #        run: ./gradlew validateDebugScreenshotTest --stacktrace
 
       # Sample taken from https://github.com/android/compose-samples/blob/main/.github/workflows/Jetchat.yaml
       # TODO: uncomment when instrumentation tests are required

@@ -70,7 +70,7 @@ android {
     }
     tasks.withType<Test> {
         testLogging {
-            events("standardOut")
+            events("standardOut", "started", "passed", "skipped", "failed")
         }
     }
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
