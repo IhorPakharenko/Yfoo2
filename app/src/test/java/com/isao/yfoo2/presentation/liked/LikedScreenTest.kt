@@ -28,6 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLooper
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
@@ -94,6 +95,7 @@ class LikedScreenTest {
         }
         testRule.printSemantics()
         testRule.waitForIdle()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 //        testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
 //        testRule.waitForIdle()
         testRule.printSemantics()
