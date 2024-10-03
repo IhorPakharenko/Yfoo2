@@ -1,7 +1,6 @@
 package com.isao.yfoo2.presentation.liked.composable
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,15 +33,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -153,7 +146,7 @@ fun ItemsAvailableContent(
     onIntent: (LikedIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
+//    var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
 
     val itemSize = 100.dp
     SideEffect {
@@ -176,6 +169,9 @@ fun ItemsAvailableContent(
                 setSortAscending = { onIntent(LikedIntent.SetSorting(it)) }
             )
         }
+        items(5) {
+            Text("INTERNAL Text number $it")
+        }
         items(
             uiState.items,
             key = { it.id }
@@ -187,31 +183,33 @@ fun ItemsAvailableContent(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .animateItemPlacement()
+//                    .animateItemPlacement()
             ) {
-                val isSelected by remember { derivedStateOf { selectedItem == item } }
-                val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)
+//                val isSelected by remember { derivedStateOf { selectedItem == item } }
+//                val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)
                 LikedItem(
                     item = item,
                     width = itemSize,
                     height = itemSize,
                     onClick = { onIntent(LikedIntent.ImageClicked(item)) },
-                    onLongClick = { selectedItem = item },
+                    onLongClick = {
+//                        selectedItem = item
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.Center)
-                        .graphicsLayer {
-                            scaleX = sizeFraction
-                            scaleY = sizeFraction
-                        }
+//                        .graphicsLayer {
+//                            scaleX = sizeFraction
+//                            scaleY = sizeFraction
+//                        }
                 )
-                ImageActionsPopup(
-                    expanded = isSelected,
-                    item = item,
-                    onDismissRequest = { selectedItem = null },
-                    onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
-                    onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
-                )
+//                ImageActionsPopup(
+//                    expanded = isSelected,
+//                    item = item,
+//                    onDismissRequest = { selectedItem = null },
+//                    onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
+//                    onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
+//                )
             }
             println("Item ${item} done")
         }
