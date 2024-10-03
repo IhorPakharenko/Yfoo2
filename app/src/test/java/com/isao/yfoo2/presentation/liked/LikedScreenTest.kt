@@ -90,6 +90,7 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
+        testRule.printSemantics()
         testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
 //        testRule.waitForIdle()
         testRule.printSemantics()
