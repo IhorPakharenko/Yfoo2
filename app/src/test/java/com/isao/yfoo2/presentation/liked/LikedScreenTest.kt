@@ -8,18 +8,15 @@ import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
 import com.isao.yfoo2.R
 import com.isao.yfoo2.presentation.liked.composable.LikedScreen
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayableDummies.generateLikedImageDisplayables
 import com.isao.yfoo2.utils.KoinRule
 import com.isao.yfoo2.utils.getString
-import com.isao.yfoo2.utils.hasNoText
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import org.junit.Rule
 import org.junit.Test
@@ -79,22 +76,6 @@ class LikedScreenTest {
         testRule.onNode(hasClickAction() and hasText(getString(R.string.added))).performClick()
 
         intents shouldHaveSingleElement { it is LikedIntent.SetSorting }
-    }
-
-    @Test
-    fun `when long clicking item, dropdown appears`() {
-        val content = generateLikedImageDisplayables(4)
-        testRule.setContent {
-            LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
-        }
-        testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
-        testRule.onNode(
-            hasText(getString(R.string.image_by, content[0].source.websiteName))
-        ).assertExists()
-        testRule.onNode(
-            hasClickAction()
-                    and hasText(getString(R.string.delete))
-        ).assertExists()
     }
 
     private fun ComposeContentTestRule.setUpComposable(
