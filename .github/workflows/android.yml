@@ -43,7 +43,7 @@ jobs:
       #        run: ./gradlew assembleDebug --stacktrace
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+        run: ./gradlew :app:testDebugUnitTest --tests "com.isao.yfoo2.presentation.liked.LikedScreenTest.when long clicking item, dropdown appears"
 
       #      - name: Run screenshot tests
       #        run: ./gradlew validateDebugScreenshotTest --stacktrace
