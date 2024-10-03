@@ -31,12 +31,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLooper
 
 @OptIn(ExperimentalFoundationApi::class)
 @RunWith(RobolectricTestRunner::class)
-@Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
+//@Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class LikedScreenTest {
     @get:Rule
@@ -46,45 +45,6 @@ class LikedScreenTest {
     val koinRule = KoinRule(emptyList())
 
     private val intents = mutableListOf<LikedIntent>()
-
-//    @Test
-//    fun `1`() {
-//        testRule.setContent {
-//            LazyColumn(Modifier.fillMaxSize()) {
-//                stickyHeader { Text("header") }
-//                items(10) {
-//                    Text("Text number $it")
-//                }
-//            }
-//        }
-//        testRule.printSemantics()
-//    }
-//
-//    @Test
-//    fun `2`() {
-//        testRule.setContent {
-//            LazyColumn(Modifier.fillMaxSize()) {
-//                stickyHeader { Text("header") }
-//                items(10) {
-//                    Text("Text number $it")
-//                }
-//            }
-//        }
-//        testRule.printSemantics()
-//    }
-//
-//    @Test
-//    fun `3`() {
-//        testRule.setContent {
-//            LazyColumn(Modifier.fillMaxSize()) {
-//                stickyHeader { Text("header") }
-//                items(10) {
-//                    Text("Text number $it")
-//                }
-//            }
-//        }
-//        testRule.printSemantics()
-//    }
 
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
@@ -159,13 +119,13 @@ class LikedScreenTest {
 //        testRule.waitForIdle()
         testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
-//        testRule.onNode(
-//            hasText(getString(R.string.image_by, content[0].source.websiteName))
-//        ).assertExists()
-//        testRule.onNode(
-//            hasClickAction()
-//                    and hasText(getString(R.string.delete))
-//        ).assertExists()
+        testRule.onNode(
+            hasText(getString(R.string.image_by, content[0].source.websiteName))
+        ).assertExists()
+        testRule.onNode(
+            hasClickAction()
+                    and hasText(getString(R.string.delete))
+        ).assertExists()
     }
 
     private fun ComposeContentTestRule.setUpComposable(

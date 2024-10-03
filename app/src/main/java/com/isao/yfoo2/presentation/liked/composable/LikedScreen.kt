@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -156,9 +155,7 @@ fun ItemsAvailableContent(
     var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
 
     val itemSize = 100.dp
-    SideEffect {
-        println("State: ${uiState}")
-    }
+
     LazyVerticalGrid(
         columns = GridCells.Adaptive(itemSize),
         modifier = modifier,
@@ -168,32 +165,20 @@ fun ItemsAvailableContent(
         item(span = {
             GridItemSpan(this.maxLineSpan)
         }) {
-            SideEffect {
-                println("LikedGridSettings")
-            }
             LikedGridSettings(
                 sortAscending = uiState.shouldSortAscending,
                 setSortAscending = { onIntent(LikedIntent.SetSorting(it)) }
             )
         }
-        items(5) {
-            Text("INTERNAL Text number $it")
-        }
-        items(uiState.items) {
-            Text("INTERNAL(ER) Text number $it")
-        }
         items(
             uiState.items,
             key = { it.id }
         ) { item ->
-            SideEffect {
-                println("Item ${item}")
-            }
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
             Box(
-                Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+//                    .animateItemPlacement()
             ) {
                 val isSelected by remember { derivedStateOf { selectedItem == item } }
                 val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)
@@ -202,9 +187,7 @@ fun ItemsAvailableContent(
                     width = itemSize,
                     height = itemSize,
                     onClick = { onIntent(LikedIntent.ImageClicked(item)) },
-                    onLongClick = {
-                        selectedItem = item
-                    },
+                    onLongClick = { selectedItem = item },
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.Center)
@@ -221,7 +204,6 @@ fun ItemsAvailableContent(
                     onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
                 )
             }
-            println("Item ${item} done")
         }
     }
 }
