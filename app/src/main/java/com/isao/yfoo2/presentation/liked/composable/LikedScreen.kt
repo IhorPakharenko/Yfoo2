@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -155,7 +156,9 @@ fun ItemsAvailableContent(
     var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
 
     val itemSize = 100.dp
-
+    SideEffect {
+        println("State: ${uiState}")
+    }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(itemSize),
         modifier = modifier,
@@ -165,6 +168,9 @@ fun ItemsAvailableContent(
         item(span = {
             GridItemSpan(this.maxLineSpan)
         }) {
+            SideEffect {
+                println("LikedGridSettings")
+            }
             LikedGridSettings(
                 sortAscending = uiState.shouldSortAscending,
                 setSortAscending = { onIntent(LikedIntent.SetSorting(it)) }
@@ -174,6 +180,9 @@ fun ItemsAvailableContent(
             uiState.items,
             key = { it.id }
         ) { item ->
+            SideEffect {
+                println("Item ${item}")
+            }
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -204,6 +213,7 @@ fun ItemsAvailableContent(
                     onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
                 )
             }
+            println("Item ${item} done")
         }
     }
 }
