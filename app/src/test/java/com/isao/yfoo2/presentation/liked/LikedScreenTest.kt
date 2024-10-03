@@ -23,15 +23,18 @@ import com.isao.yfoo2.utils.getString
 import com.isao.yfoo2.utils.hasNoText
 import com.isao.yfoo2.utils.printSemantics
 import io.kotest.matchers.collections.shouldHaveSingleElement
+import org.junit.FixMethodOrder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLooper
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class LikedScreenTest {
     @get:Rule
     val testRule = createComposeRule()
@@ -88,7 +91,7 @@ class LikedScreenTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun `when long clicking item, dropdown appears`() {
+    fun `awhen long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
