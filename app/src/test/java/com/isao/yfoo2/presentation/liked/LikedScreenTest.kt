@@ -88,6 +88,7 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
+        testRule.waitForIdle()
         testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
         testRule.onNode(
