@@ -1,12 +1,9 @@
 package com.isao.yfoo2.presentation.liked
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasScrollAction
@@ -50,44 +47,44 @@ class LikedScreenTest {
 
     private val intents = mutableListOf<LikedIntent>()
 
-    @Test
-    fun `1`() {
-        testRule.setContent {
-            LazyColumn(Modifier.fillMaxSize()) {
-                stickyHeader { Text("header") }
-                items(10) {
-                    Text("Text number $it")
-                }
-            }
-        }
-        testRule.printSemantics()
-    }
-
-    @Test
-    fun `2`() {
-        testRule.setContent {
-            LazyColumn(Modifier.fillMaxSize()) {
-                stickyHeader { Text("header") }
-                items(10) {
-                    Text("Text number $it")
-                }
-            }
-        }
-        testRule.printSemantics()
-    }
-
-    @Test
-    fun `3`() {
-        testRule.setContent {
-            LazyColumn(Modifier.fillMaxSize()) {
-                stickyHeader { Text("header") }
-                items(10) {
-                    Text("Text number $it")
-                }
-            }
-        }
-        testRule.printSemantics()
-    }
+//    @Test
+//    fun `1`() {
+//        testRule.setContent {
+//            LazyColumn(Modifier.fillMaxSize()) {
+//                stickyHeader { Text("header") }
+//                items(10) {
+//                    Text("Text number $it")
+//                }
+//            }
+//        }
+//        testRule.printSemantics()
+//    }
+//
+//    @Test
+//    fun `2`() {
+//        testRule.setContent {
+//            LazyColumn(Modifier.fillMaxSize()) {
+//                stickyHeader { Text("header") }
+//                items(10) {
+//                    Text("Text number $it")
+//                }
+//            }
+//        }
+//        testRule.printSemantics()
+//    }
+//
+//    @Test
+//    fun `3`() {
+//        testRule.setContent {
+//            LazyColumn(Modifier.fillMaxSize()) {
+//                stickyHeader { Text("header") }
+//                items(10) {
+//                    Text("Text number $it")
+//                }
+//            }
+//        }
+//        testRule.printSemantics()
+//    }
 
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
@@ -117,7 +114,7 @@ class LikedScreenTest {
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when content available, show all content`() {
-        val content = generateLikedImageDisplayables(2)
+        val content = generateLikedImageDisplayables(4)
         testRule.setContent {
             ItemsAvailableContent(uiState = LikedUiState(items = content), onIntent = {})
         }
@@ -131,7 +128,7 @@ class LikedScreenTest {
             // Sorting button
             .assertAny(hasText(getString(R.string.added)))
             // Items + Sorting button
-//            .assertCountEquals(content.size + 1)
+            .assertCountEquals(content.size + 1)
     }
 
     @Test
