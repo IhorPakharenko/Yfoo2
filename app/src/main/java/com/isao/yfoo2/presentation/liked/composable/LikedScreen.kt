@@ -178,7 +178,7 @@ fun ItemsAvailableContent(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-//                    .animateItemPlacement()
+                    .animateItemPlacement()
             ) {
                 val isSelected by remember { derivedStateOf { selectedItem == item } }
                 val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)

@@ -31,7 +31,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.shadows.ShadowLooper
 
 @OptIn(ExperimentalFoundationApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -52,9 +51,6 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isLoading = true), onIntent = {})
         }
-        testRule.waitForIdle()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        testRule.printSemantics()
         testRule.onNodeWithContentDescription(getString(R.string.loading)).assertExists()
     }
 
@@ -64,10 +60,6 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isError = true), onIntent = {})
         }
-        testRule.waitForIdle()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        testRule.printSemantics()
-
         testRule.onNodeWithText(getString(R.string.something_went_wrong)).assertExists()
     }
 
@@ -78,8 +70,6 @@ class LikedScreenTest {
         testRule.setContent {
             ItemsAvailableContent(uiState = LikedUiState(items = content), onIntent = {})
         }
-        testRule.waitForIdle()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
 
         testRule.onNode(hasScrollAction())
@@ -96,8 +86,6 @@ class LikedScreenTest {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
         // Sorting button
-        testRule.waitForIdle()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         testRule.printSemantics()
 
         testRule.onNode(hasClickAction() and hasText(getString(R.string.added))).performClick()
@@ -110,13 +98,8 @@ class LikedScreenTest {
     fun `awhen long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setContent {
-            ItemsAvailableContent(uiState = LikedUiState(items = content), onIntent = {})
+            LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
-        testRule.printSemantics()
-        testRule.waitForIdle()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-//        testRule.waitUntilAtLeastOneExists(hasClickAction() and hasNoText())
-//        testRule.waitForIdle()
         testRule.printSemantics()
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
         testRule.onNode(
@@ -132,7 +115,7 @@ class LikedScreenTest {
         state: LikedUiState = LikedUiState(),
         onIntent: (LikedIntent) -> Unit = {}
     ) = setContent {
-        ItemsAvailableContent(
+        LikedScreen(
             uiState = state,
             onIntent = {
                 intents += it
