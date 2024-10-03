@@ -50,6 +50,7 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isLoading = true), onIntent = {})
         }
+        testRule.printSemantics()
         testRule.onNodeWithContentDescription(getString(R.string.loading)).assertExists()
     }
 
@@ -59,6 +60,8 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(isError = true), onIntent = {})
         }
+        testRule.printSemantics()
+
         testRule.onNodeWithText(getString(R.string.something_went_wrong)).assertExists()
     }
 
@@ -69,6 +72,7 @@ class LikedScreenTest {
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
+        testRule.printSemantics()
 
         testRule.onNode(hasScrollAction())
             .onChildren()
@@ -84,6 +88,8 @@ class LikedScreenTest {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
         // Sorting button
+        testRule.printSemantics()
+
         testRule.onNode(hasClickAction() and hasText(getString(R.string.added))).performClick()
 
         intents shouldHaveSingleElement { it is LikedIntent.SetSorting }
