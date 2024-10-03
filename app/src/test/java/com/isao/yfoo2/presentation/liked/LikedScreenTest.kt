@@ -1,7 +1,5 @@
 package com.isao.yfoo2.presentation.liked
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
@@ -17,7 +15,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import com.isao.yfoo2.R
-import com.isao.yfoo2.presentation.liked.composable.ItemsAvailableContent
 import com.isao.yfoo2.presentation.liked.composable.LikedScreen
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayableDummies.generateLikedImageDisplayables
 import com.isao.yfoo2.utils.KoinRule
@@ -25,17 +22,12 @@ import com.isao.yfoo2.utils.getString
 import com.isao.yfoo2.utils.hasNoText
 import com.isao.yfoo2.utils.printSemantics
 import io.kotest.matchers.collections.shouldHaveSingleElement
-import org.junit.FixMethodOrder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalFoundationApi::class)
 @RunWith(RobolectricTestRunner::class)
-//@Config(qualifiers = "w800dp-h1500dp-xxxhdpi")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class LikedScreenTest {
     @get:Rule
     val testRule = createComposeRule()
@@ -68,7 +60,7 @@ class LikedScreenTest {
     fun `when content available, show all content`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setContent {
-            ItemsAvailableContent(uiState = LikedUiState(items = content), onIntent = {})
+            LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
         }
         testRule.printSemantics()
 
@@ -82,7 +74,7 @@ class LikedScreenTest {
     }
 
     @Test
-    fun `bwhen content available, sorting button is available`() {
+    fun `when content available, sorting button is available`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
         // Sorting button
@@ -93,9 +85,8 @@ class LikedScreenTest {
         intents shouldHaveSingleElement { it is LikedIntent.SetSorting }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun `awhen long clicking item, dropdown appears`() {
+    fun `when long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setContent {
             LikedScreen(uiState = LikedUiState(items = content), onIntent = {})

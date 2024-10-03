@@ -79,7 +79,7 @@ fun LikedItem(
         ) {
             Icon(
                 imageVector = Icons.Default.ErrorOutline,
-                contentDescription = "error",
+                contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(0.5f)
                     .combinedClickable(
