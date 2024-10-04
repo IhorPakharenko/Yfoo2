@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.isao.yfoo2.presentation.liked
 
 import app.cash.turbine.Event
@@ -32,6 +34,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -65,8 +68,7 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                 Dispatchers.setMain(StandardTestDispatcher())
                 subject.uiState.test {
                     testCoroutineScheduler.advanceUntilIdle()
-                    val states = consumeNonFinalStates()
-                    states.forNone { it.isError shouldBe true }
+                    consumeNonFinalStates().forNone { it.isError shouldBe true }
                 }
             }
             Then("Loading is in progress and then finished") {
@@ -98,32 +100,40 @@ class LikedViewModelTest : BehaviorSpec(), KoinTest {
                 }
             }
             When("Images are sorted by default") {
-                //TODO test toggle state
                 Then("Images are shown from newer to older") {
-                    subject.uiState.testValue().items shouldContainExactly listOf(
-                        LikedImage2.toPresentationModel(),
-                        LikedImage1.toPresentationModel()
-                    )
+                    subject.uiState.testValue().apply {
+                        items shouldContainExactly listOf(
+                            LikedImage2.toPresentationModel(),
+                            LikedImage1.toPresentationModel()
+                        )
+                        shouldSortAscending shouldBe false
+                    }
                 }
             }
             When("Images are sorted in ascending order") {
                 subject.acceptIntent(SetSorting(shouldSortAscending = true))
 
                 Then("Images are shown from older to newer") {
-                    getLatestState(subject.uiState).items shouldContainExactly listOf(
-                        LikedImage1.toPresentationModel(),
-                        LikedImage2.toPresentationModel()
-                    )
+                    getLatestState(subject.uiState).apply {
+                        items shouldContainExactly listOf(
+                            LikedImage1.toPresentationModel(),
+                            LikedImage2.toPresentationModel()
+                        )
+                        shouldSortAscending shouldBe true
+                    }
                 }
 
                 And("Sorting order is changed again") {
                     subject.acceptIntent(SetSorting(shouldSortAscending = false))
 
                     Then("Images are shown from newer to older") {
-                        subject.uiState.testValue().items shouldContainExactly listOf(
-                            LikedImage2.toPresentationModel(),
-                            LikedImage1.toPresentationModel()
-                        )
+                        subject.uiState.testValue().apply {
+                            items shouldContainExactly listOf(
+                                LikedImage2.toPresentationModel(),
+                                LikedImage1.toPresentationModel()
+                            )
+                            shouldSortAscending shouldBe false
+                        }
                     }
                 }
             }

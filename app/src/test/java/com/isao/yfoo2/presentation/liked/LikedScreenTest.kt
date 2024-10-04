@@ -39,18 +39,14 @@ class LikedScreenTest {
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when loading, show loading placeholder`() {
-        testRule.setContent {
-            LikedScreen(uiState = LikedUiState(isLoading = true), onIntent = {})
-        }
+        testRule.setUpComposable(state = LikedUiState(isLoading = true), onIntent = {})
         testRule.onNodeWithContentDescription(getString(R.string.loading)).assertExists()
     }
 
     // A screenshot test already covers this case, so this test is likely unnecessary
     @Test
     fun `when error, show error bar`() {
-        testRule.setContent {
-            LikedScreen(uiState = LikedUiState(isError = true), onIntent = {})
-        }
+        testRule.setUpComposable(state = LikedUiState(isError = true), onIntent = {})
         testRule.onNodeWithText(getString(R.string.something_went_wrong)).assertExists()
     }
 
@@ -58,9 +54,7 @@ class LikedScreenTest {
     @Test
     fun `when content available, show all content`() {
         val content = generateLikedImageDisplayables(4)
-        testRule.setContent {
-            LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
-        }
+        testRule.setUpComposable(state = LikedUiState(items = content), onIntent = {})
 
         testRule.onNode(hasScrollAction())
             .onChildren()
@@ -75,6 +69,7 @@ class LikedScreenTest {
     fun `when content available, sorting button is available`() {
         val content = generateLikedImageDisplayables(4)
         testRule.setUpComposable(state = LikedUiState(items = content))
+
         // Sorting button
         testRule.onNode(hasClickAction() and hasText(getString(R.string.added))).performClick()
 
@@ -84,10 +79,10 @@ class LikedScreenTest {
     @Test
     fun `when long clicking item, dropdown appears`() {
         val content = generateLikedImageDisplayables(4)
-        testRule.setContent {
-            LikedScreen(uiState = LikedUiState(items = content), onIntent = {})
-        }
+        testRule.setUpComposable(state = LikedUiState(items = content))
+
         testRule.onAllNodes(hasClickAction() and hasNoText())[0].performTouchInput { longClick() }
+
         testRule.onNode(
             hasText(getString(R.string.image_by, content[0].source.websiteName))
         ).assertExists()
