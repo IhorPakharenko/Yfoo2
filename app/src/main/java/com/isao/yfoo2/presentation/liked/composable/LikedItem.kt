@@ -27,7 +27,7 @@ import com.google.accompanist.placeholder.material.shimmer
 import com.isao.yfoo2.core.utils.CatPreviewPlaceholder
 import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.liked.model.LikedImageDisplayable
-import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
+import com.isao.yfoo2.presentation.transformations.BitmapTransformations
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -52,7 +52,7 @@ fun LikedItem(
                 with(LocalDensity.current) { width.roundToPx() },
                 with(LocalDensity.current) { height.roundToPx() }
             )
-            .transformations(BorderCropTransformation())
+            .transformations(BitmapTransformations.getFor(item.source))
             .build(),
         placeholder = debugPlaceholder(Color.Magenta),
         contentScale = ContentScale.Crop,

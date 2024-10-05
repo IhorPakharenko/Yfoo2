@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.Dp
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
-import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
+import com.isao.yfoo2.presentation.transformations.BitmapTransformations
 
 @Composable
 fun PreloadFeedItem(
@@ -29,7 +29,7 @@ fun PreloadFeedItem(
                     widthPx,
                     heightPx
                 )
-                .transformations(BorderCropTransformation())
+                .transformations(BitmapTransformations.getFor(item.source))
                 .build()
         )
     }

@@ -36,7 +36,8 @@ import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.isao.yfoo2.core.utils.CatPreviewPlaceholder
 import com.isao.yfoo2.core.utils.debugPlaceholder
-import com.isao.yfoo2.presentation.transformations.BorderCropTransformation
+import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
+import com.isao.yfoo2.presentation.transformations.BitmapTransformations
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -79,15 +80,15 @@ fun FeedCard(
 
 @Composable
 fun FeedCard(
-    imageUrl: String?,
+    item: FeedItemDisplayable?,
     width: Dp,
     height: Dp,
     modifier: Modifier = Modifier
 ) {
     FeedCard(
-        painter = if (imageUrl != null) {
+        painter = if (item?.imageUrl != null) {
             FeedCardDefaults.rememberRetryingAsyncImagePainter(
-                imageUrl = imageUrl,
+                item = item,
                 width = width,
                 height = height
             )
@@ -101,7 +102,7 @@ fun FeedCard(
 object FeedCardDefaults {
     @Composable
     fun rememberRetryingAsyncImagePainter(
-        imageUrl: String,
+        item: FeedItemDisplayable,
         width: Dp,
         height: Dp,
         error: Painter? = null,
@@ -117,7 +118,7 @@ object FeedCardDefaults {
         var retryHash by remember { mutableIntStateOf(0) }
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
+                .data(item.imageUrl)
                 .setParameter("retryHash", retryHash)
                 // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
                 // https://coil-kt.github.io/coil/compose/#observing-asyncimagepainterstate
@@ -125,7 +126,7 @@ object FeedCardDefaults {
                     with(LocalDensity.current) { width.roundToPx() },
                     with(LocalDensity.current) { height.roundToPx() }
                 )
-                .transformations(BorderCropTransformation())
+                .transformations(BitmapTransformations.getFor(item.source))
                 .build(),
             placeholder = debugPlaceholder(Color.Magenta),
             contentScale = contentScale,

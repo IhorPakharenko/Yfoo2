@@ -107,7 +107,7 @@ fun FeedScreenContent(
             val backgroundCardScale by animateFloatAsState(backgroundCardTargetScale)
 
             FeedCard(
-                imageUrl = backgroundItem.imageUrl,
+                item = backgroundItem,
                 width = cardImageWidth,
                 height = cardImageHeight,
                 Modifier
@@ -118,9 +118,9 @@ fun FeedScreenContent(
                     }
             )
         }
-        val topItemPainter = topItem?.imageUrl?.let { url ->
+        val topItemPainter = topItem?.let { item ->
             FeedCardDefaults.rememberRetryingAsyncImagePainter(
-                imageUrl = url,
+                item = item,
                 width = cardImageWidth,
                 height = cardImageHeight
             ).also {
