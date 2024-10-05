@@ -3,12 +3,10 @@ package com.isao.yfoo2.presentation.feed.composable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -88,11 +86,28 @@ fun FeedScreenContent(
         )
 
         if (backgroundItem != null) {
+            val backgroundCardTargetScale by remember {
+                derivedStateOf {
+                    topItemState.combinedDismissProgress
+                        .coerceIn(0f..1f)
+                        .scale(
+                            oldMin = 0f, oldMax = 1f,
+                            newMin = 0.95f, newMax = 1f,
+                        )
+                }
+            }
+            val backgroundCardScale by animateFloatAsState(backgroundCardTargetScale)
+
             FeedCard(
                 imageUrl = backgroundItem.imageUrl,
                 width = cardImageWidth,
                 height = cardImageHeight,
-                Modifier.padding(cardPadding)
+                Modifier
+                    .padding(cardPadding)
+                    .graphicsLayer {
+                        scaleX = backgroundCardScale
+                        scaleY = backgroundCardScale
+                    }
             )
         }
 
@@ -130,7 +145,9 @@ fun FeedScreenContent(
         FeedButtons(
             topItemState = topItemState,
             enabled = isTopItemEnabled,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .padding(bottom = 48.dp)
+                .align(Alignment.BottomCenter)
         )
     }
 }
@@ -140,61 +157,57 @@ private fun FeedButtons(
     topItemState: DismissibleState,
     enabled: Boolean,
     modifier: Modifier = Modifier,
-) = Box(modifier) {
+) = Row(modifier, horizontalArrangement = Arrangement.SpaceBetween) {
     val scope = rememberCoroutineScope()
 
-    val dislikeButtonScale by remember {
+    val dislikeButtonTargetScale by remember {
         derivedStateOf {
             getButtonScale(topItemState.horizontalDismissProgress * -1)
         }
     }
-    val likeButtonScale by remember {
+    val dislikeButtonScale by animateFloatAsState(dislikeButtonTargetScale)
+
+    val likeButtonTargetScale by remember {
         derivedStateOf {
             getButtonScale(topItemState.horizontalDismissProgress)
         }
     }
+    val likeButtonScale by animateFloatAsState(likeButtonTargetScale)
 
-    val animatedDislikeButtonScale by animateFloatAsState(dislikeButtonScale)
-    val animatedLikeButtonScale by animateFloatAsState(likeButtonScale)
+    var dismissAnimationJob by remember { mutableStateOf<Job?>(null) }
 
-    Row(
-        Modifier
-            .padding(bottom = 48.dp)
-            .align(Alignment.BottomCenter),
-        horizontalArrangement = Arrangement.SpaceBetween
+    FeedButton(
+        onClick = {
+            scope.launch {
+                if (dismissAnimationJob?.isActive == true) return@launch
+                dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.Start) }
+            }
+        },
+        modifier = Modifier.graphicsLayer {
+            scaleX = dislikeButtonScale
+            scaleY = dislikeButtonScale
+        },
+        enabled = enabled
     ) {
-        var dismissAnimationJob by remember { mutableStateOf<Job?>(null) }
-        FeedButton(
-            onClick = {
-                scope.launch {
-                    if (dismissAnimationJob?.isActive == true) return@launch
-                    dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.Start) }
-                }
-            },
-            modifier = Modifier.graphicsLayer {
-                scaleX = animatedDislikeButtonScale
-                scaleY = animatedDislikeButtonScale
-            },
-            enabled = enabled
-        ) {
-            DislikeIcon()
-        }
-        Spacer(Modifier.width(72.dp))
-        FeedButton(
-            onClick = {
-                scope.launch {
-                    if (dismissAnimationJob?.isActive == true) return@launch
-                    dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.End) }
-                }
-            },
-            modifier = Modifier.graphicsLayer {
-                scaleX = animatedLikeButtonScale
-                scaleY = animatedLikeButtonScale
-            },
-            enabled = enabled
-        ) {
-            LikeIcon()
-        }
+        DislikeIcon()
+    }
+
+    Spacer(Modifier.width(72.dp))
+
+    FeedButton(
+        onClick = {
+            scope.launch {
+                if (dismissAnimationJob?.isActive == true) return@launch
+                dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.End) }
+            }
+        },
+        modifier = Modifier.graphicsLayer {
+            scaleX = likeButtonScale
+            scaleY = likeButtonScale
+        },
+        enabled = enabled
+    ) {
+        LikeIcon()
     }
 }
 

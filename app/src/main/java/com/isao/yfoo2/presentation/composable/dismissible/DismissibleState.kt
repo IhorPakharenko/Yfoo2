@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.math.hypot
 import kotlin.math.sin
 
 
@@ -65,17 +66,41 @@ class DismissibleState(
     val targetValue get() = offset.targetValue
 
     /**
-     * Not coerced by directions
+     * The fraction of the progress going from the middle of the available space
+     * to the edge in horizontal plane.
+     * The value is equal to 0f when the card is in its initial position.
+     * The value is roughly within -1f..1f bounds, but will go beyond these bounds
+     * during dismiss to be fully hidden when the card is rotated.
+     *
+     * Not coerced by allowed directions.
      */
     val horizontalDismissProgress by derivedStateOf {
         offset.value.x / containerWidth * if (layoutDirection == LayoutDirection.Rtl) -1 else 1
     }
 
     /**
-     * Not coerced by directions
+     * The fraction of the progress going from the middle of the available space
+     * to the edge in vertical plane.
+     * The value is equal to 0f when the card is in its initial position.
+     * The value is roughly within -1f..1f bounds, but will go beyond these bounds
+     * during dismiss to be fully hidden when the card is rotated.
+     *
+     * Not coerced by allowed directions.
      */
     val verticalDismissProgress by derivedStateOf {
         offset.value.y / containerHeight
+    }
+
+    /**
+     * The fraction of the progress going from the middle of the available space
+     * to the edge in both horizontal and vertical planes.
+     * The value is roughly within 0..1f bounds, but will go beyond these bounds
+     * during dismiss to be fully hidden when the card is rotated.
+     *
+     * Not coerced by allowed directions.
+     */
+    val combinedDismissProgress by derivedStateOf {
+        hypot(horizontalDismissProgress.absoluteValue, verticalDismissProgress.absoluteValue)
     }
 
     val rotationZ by derivedStateOf {
