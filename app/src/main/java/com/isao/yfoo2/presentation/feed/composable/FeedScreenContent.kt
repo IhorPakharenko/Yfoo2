@@ -19,26 +19,37 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import com.isao.yfoo2.R
+import com.isao.yfoo2.core.extensions.findActivity
 import com.isao.yfoo2.core.extensions.scale
+import com.isao.yfoo2.core.utils.SplashScreenHost
 import com.isao.yfoo2.presentation.composable.dismissible.DismissDirection
 import com.isao.yfoo2.presentation.composable.dismissible.DismissibleState
 import com.isao.yfoo2.presentation.composable.dismissible.dismissible
 import com.isao.yfoo2.presentation.composable.dismissible.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalMaterialApi
 @Composable
@@ -107,13 +118,14 @@ fun FeedScreenContent(
                     }
             )
         }
-
         val topItemPainter = topItem?.imageUrl?.let { url ->
             FeedCardDefaults.rememberRetryingAsyncImagePainter(
                 imageUrl = url,
                 width = cardImageWidth,
                 height = cardImageHeight
-            )
+            ).also {
+                SplashController(painterState = it.state)
+            }
         }
 
         val isLikeAllowed by remember(topItem) {
@@ -271,5 +283,30 @@ private fun getButtonScale(dismissProgress: Float): Float {
             oldMin = minProgress, oldMax = maxProgress,
             newMin = minScale, newMax = maxScale,
         )
+    }
+}
+
+/**
+ * Keeps splash screen on screen for an extra second or until the first image is prepared.
+ * Does nothing if splash screen is not allowed to be drawn longer than necessary
+ * ([SplashScreenHost.shouldKeepSplashScreen] is false)
+ */
+@OptIn(FlowPreview::class)
+@Composable
+private fun SplashController(painterState: AsyncImagePainter.State) {
+    val splashScreenHost = LocalContext.current.findActivity() as? SplashScreenHost
+    if (splashScreenHost?.shouldKeepSplashScreen != true) return
+    LaunchedEffect(Unit) {
+        snapshotFlow { painterState }
+            .map {
+                it is AsyncImagePainter.State.Success
+                        || it is AsyncImagePainter.State.Error
+            }
+            .timeout(1.seconds)
+            .catch { emit(true) }
+            .filter { it }
+            .collect {
+                splashScreenHost.shouldKeepSplashScreen = false
+            }
     }
 }

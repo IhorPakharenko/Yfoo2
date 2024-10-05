@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -35,6 +35,7 @@ import com.isao.yfoo2.core.navigation.NavigationFactories
 import com.isao.yfoo2.core.navigation.Screen
 import com.isao.yfoo2.core.navigation.YfooNavHost
 import com.isao.yfoo2.core.theme.Yfoo2Theme
+import com.isao.yfoo2.core.utils.SplashScreenHost
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.compose.koinInject
 
@@ -47,10 +48,15 @@ enum class BottomNavigationScreen(
     Liked(Screen.Liked.route, R.string.liked, Icons.Filled.Favorite),
 }
 
-class MainActivity : FragmentActivity() {
+class MainActivity : FragmentActivity(), SplashScreenHost {
 
-    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+    override var shouldKeepSplashScreen = true
+
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { shouldKeepSplashScreen }
+
         super.onCreate(savedInstanceState)
         // Let the app take up all screen space, including system bars
         WindowCompat.setDecorFitsSystemWindows(window, false)

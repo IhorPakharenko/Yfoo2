@@ -126,6 +126,7 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.accompanist.placeholder.material)
     implementation(libs.accompanist.drawablepainter)
+    implementation(libs.androidx.core.splashscreen)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.compose.ui.test.junit4)

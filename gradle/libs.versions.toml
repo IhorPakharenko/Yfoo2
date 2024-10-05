@@ -1,6 +1,7 @@
 [versions]
 androidGradlePlugin = "8.5.1"
 androidTestCompose = "1.4.0"
+coreSplashscreen = "1.0.1"
 junitVintageEngine = "5.10.3"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.22"
@@ -53,6 +54,7 @@ screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"
 [libraries]
 android-test-compose = { module = "de.mannodermaus.junit5:android-test-compose", version.ref = "androidTestCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
