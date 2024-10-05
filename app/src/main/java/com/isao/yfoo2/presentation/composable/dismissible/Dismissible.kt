@@ -57,6 +57,11 @@ private data class DismissibleElement(
     val dismissThresholds: DismissThresholds,
 ) : ModifierNodeElement<DismissibleNode>() {
     override fun create(): DismissibleNode {
+        state.directions = directions
+        state.maxRotationZ = maxRotationZ
+        state.minHorizontalProgressThreshold = dismissThresholds.minHorizontalProgressThreshold
+        state.minVerticalProgressThreshold = dismissThresholds.minVerticalProgressThreshold
+
         return DismissibleNode(
             state,
             directions,
