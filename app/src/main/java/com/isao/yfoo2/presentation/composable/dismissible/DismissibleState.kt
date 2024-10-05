@@ -2,8 +2,10 @@ package com.isao.yfoo2.presentation.composable.dismissible
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -108,11 +110,9 @@ class DismissibleState(
     }
 
     /**
-     * The [DismissDirection] the composable was swiped at.
-     *
-     * Null value means the composable has not been swiped fully yet.
+     * The [DismissDirection] (if any) in which the composable has been or is being dismissed.
      */
-    var dismissedDirection: DismissDirection? by mutableStateOf(null)
+    var dismissDirection: DismissDirection? by mutableStateOf(null)
         private set
 
     private val endX by derivedStateOf {
@@ -128,7 +128,7 @@ class DismissibleState(
             stiffness = Spring.StiffnessLow
         )
     ) {
-        dismissedDirection = null
+        dismissDirection = null
         if (animationSpec != null) {
             offset.animateTo(Offset.Zero, animationSpec)
         } else {
@@ -136,7 +136,8 @@ class DismissibleState(
         }
     }
 
-    suspend fun dismiss(direction: DismissDirection, spec: AnimationSpec<Offset> = tween(500)) {
+    suspend fun dismiss(direction: DismissDirection, spec: AnimationSpec<Offset> = tween(1000)) {
+        dismissDirection = direction
         val directionMultiplier = if (layoutDirection == LayoutDirection.Rtl) -1 else 1
         when (direction) {
             DismissDirection.Start -> offset.animateTo(
@@ -148,7 +149,6 @@ class DismissibleState(
             DismissDirection.Up -> offset.animateTo(offset(y = -endY), spec)
             DismissDirection.Down -> offset.animateTo(offset(y = endY), spec)
         }
-        this.dismissedDirection = direction
         onDismiss(direction)
     }
 
@@ -181,13 +181,19 @@ class DismissibleState(
         val dismissDirection: DismissDirection? =
             dismissDirectionDueToVelocity ?: dismissDirectionDueToOffset
         if (dismissDirection != null) {
-            dismiss(dismissDirection)
+            dismiss(dismissDirection, tween(500, easing = LinearOutSlowInEasing))
         } else {
             reset()
         }
     }
 
     internal suspend fun performDrag(dragged: Offset) {
+        // If there is an ongoing dismiss animation, immediately finish it.
+        // The drag will then be performed on an updated composable.
+        dismissDirection?.let { direction ->
+            dismiss(direction, snap())
+        }
+
         val original = offset.targetValue
         val summed = original + dragged
         offset.animateTo(

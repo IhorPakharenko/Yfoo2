@@ -21,10 +21,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,7 +38,6 @@ import com.isao.yfoo2.presentation.composable.dismissible.dismissible
 import com.isao.yfoo2.presentation.composable.dismissible.rememberDismissibleState
 import com.isao.yfoo2.presentation.feed.FeedIntent
 import com.isao.yfoo2.presentation.feed.FeedUiState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -118,12 +115,15 @@ fun FeedScreenContent(
                 height = cardImageHeight
             )
         }
-        //TODO perhaps change this behavior. Right now, if the link to the top item is not working
-        // for any reason, the user can not skip this image and view others, that are possibly working properly.
-        // Maybe allow skipping but not allow liking broken images
-        val isTopItemEnabled by remember(topItem) {
+
+        val isLikeAllowed by remember(topItem) {
             derivedStateOf {
                 topItemPainter?.state is AsyncImagePainter.State.Success
+            }
+        }
+        val isDislikeAllowed by remember(topItem) {
+            derivedStateOf {
+                topItemPainter?.state != null
             }
         }
 
@@ -133,18 +133,17 @@ fun FeedScreenContent(
                 .padding(cardPadding)
                 .dismissible(
                     state = topItemState,
-                    directions = if (isTopItemEnabled) {
-                        setOf(DismissDirection.Start, DismissDirection.End)
-                    } else {
-                        emptySet()
-                    },
-                    enabled = isTopItemEnabled,
+                    directions = setOfNotNull(
+                        DismissDirection.Start.takeIf { isDislikeAllowed },
+                        DismissDirection.End.takeIf { isLikeAllowed }
+                    ),
                 )
         )
 
         FeedButtons(
             topItemState = topItemState,
-            enabled = isTopItemEnabled,
+            isLikeEnabled = isLikeAllowed,
+            isDislikeEnabled = isDislikeAllowed,
             modifier = Modifier
                 .padding(bottom = 48.dp)
                 .align(Alignment.BottomCenter)
@@ -155,7 +154,8 @@ fun FeedScreenContent(
 @Composable
 private fun FeedButtons(
     topItemState: DismissibleState,
-    enabled: Boolean,
+    isLikeEnabled: Boolean,
+    isDislikeEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) = Row(modifier, horizontalArrangement = Arrangement.SpaceBetween) {
     val scope = rememberCoroutineScope()
@@ -174,38 +174,38 @@ private fun FeedButtons(
     }
     val likeButtonScale by animateFloatAsState(likeButtonTargetScale)
 
-    var dismissAnimationJob by remember { mutableStateOf<Job?>(null) }
-
+    // Dislike button
     FeedButton(
         onClick = {
             scope.launch {
-                if (dismissAnimationJob?.isActive == true) return@launch
-                dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.Start) }
+                if (topItemState.dismissDirection != null) return@launch
+                launch { topItemState.dismiss(DismissDirection.Start) }
             }
         },
         modifier = Modifier.graphicsLayer {
             scaleX = dislikeButtonScale
             scaleY = dislikeButtonScale
         },
-        enabled = enabled
+        enabled = isDislikeEnabled
     ) {
         DislikeIcon()
     }
 
     Spacer(Modifier.width(72.dp))
 
+    // Like button
     FeedButton(
         onClick = {
             scope.launch {
-                if (dismissAnimationJob?.isActive == true) return@launch
-                dismissAnimationJob = launch { topItemState.dismiss(DismissDirection.End) }
+                if (topItemState.dismissDirection != null) return@launch
+                launch { topItemState.dismiss(DismissDirection.End) }
             }
         },
         modifier = Modifier.graphicsLayer {
             scaleX = likeButtonScale
             scaleY = likeButtonScale
         },
-        enabled = enabled
+        enabled = isLikeEnabled
     ) {
         LikeIcon()
     }
