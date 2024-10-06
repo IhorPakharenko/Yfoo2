@@ -1,5 +1,8 @@
 package com.isao.yfoo2.presentation.feed.composable
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +34,7 @@ import androidx.lifecycle.compose.currentStateAsState
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -39,43 +43,43 @@ import com.isao.yfoo2.core.utils.debugPlaceholder
 import com.isao.yfoo2.presentation.feed.model.FeedItemDisplayable
 import com.isao.yfoo2.presentation.transformations.BitmapTransformations
 import kotlinx.coroutines.delay
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun FeedCard(
     painter: AsyncImagePainter?,
     modifier: Modifier = Modifier
-) {
-    Card(modifier) {
-        if (painter == null) {
-            EmptyPlaceholder()
-            return@Card
-        }
-
-        if (LocalInspectionMode.current) {
-            CatPreviewPlaceholder(Modifier.fillMaxSize())
-            return@Card
-        }
-
-        when (painter.state) {
-            is AsyncImagePainter.State.Success -> {
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            is AsyncImagePainter.State.Loading, AsyncImagePainter.State.Empty -> {
-                EmptyPlaceholder()
-            }
-
-            is AsyncImagePainter.State.Error -> {
-                ErrorPlaceholder()
-            }
-        }
+) = Card(modifier) {
+    if (LocalInspectionMode.current) {
+        CatPreviewPlaceholder(Modifier.fillMaxSize())
+        return@Card
     }
+
+    val isAnyErrorExceptBadInternet = painter?.state?.let {
+        it is AsyncImagePainter.State.Error
+                && it.result.throwable !is SocketTimeoutException
+                && it.result.throwable !is UnknownHostException
+    }
+    AnimatedVisibility(
+        visible = isAnyErrorExceptBadInternet == true,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        ErrorPlaceholder()
+    }
+    Image(
+        painter = painter ?: rememberDrawablePainter(null),
+        contentDescription = null,
+        modifier = Modifier
+            .fillMaxSize()
+            .placeholder(
+                visible = painter?.state !is AsyncImagePainter.State.Success,
+                highlight = PlaceholderHighlight.shimmer()
+            ),
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Composable
@@ -115,7 +119,7 @@ object FeedCardDefaults {
     ): AsyncImagePainter {
         // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
         // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-        var retryHash by remember { mutableIntStateOf(0) }
+        var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(item.imageUrl)
@@ -126,6 +130,12 @@ object FeedCardDefaults {
                     with(LocalDensity.current) { width.roundToPx() },
                     with(LocalDensity.current) { height.roundToPx() }
                 )
+                // By default retryHash is also included in keys.
+                // This results in a bit longer loading if the same image is requested
+                // with retryHash == 0 next time.
+                // Set our own cache keys to avoid it.
+                .diskCacheKey(item.imageUrl)
+                .memoryCacheKey(item.imageUrl)
                 .transformations(BitmapTransformations.getFor(item.source))
                 .build(),
             placeholder = debugPlaceholder(Color.Magenta),
@@ -142,26 +152,14 @@ object FeedCardDefaults {
         val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
         val hasImageRequestFailed = painter.state is AsyncImagePainter.State.Error
         LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
-            while (isAtLeastResumed && hasImageRequestFailed) {
+            if (isAtLeastResumed && hasImageRequestFailed) {
+                delay(if (retryHash <= 2) 2.seconds else 5.seconds)
                 retryHash++
-                delay(5.seconds)
             }
         }
 
         return painter
     }
-}
-
-@Composable
-private fun EmptyPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .placeholder(
-                visible = true,
-                highlight = PlaceholderHighlight.shimmer()
-            )
-    )
 }
 
 @Composable
