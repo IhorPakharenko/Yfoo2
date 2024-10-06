@@ -1,6 +1,8 @@
 package com.isao.yfoo2.presentation.feed.composable
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -230,18 +232,28 @@ private fun FeedButton(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
+    val containerColor by animateColorAsState(
+        if (enabled) Color.Black.copy(alpha = 0.3f) else Color.Black.copy(alpha = 0.1f),
+        animationSpec = tween(600)
+    )
+    val contentAndOutlineColor by animateColorAsState(
+        if (enabled) Color.White else Color.White.copy(alpha = 0.3f),
+        animationSpec = tween(400)
+    )
     OutlinedButton(
         onClick = onClick,
         modifier = modifier.size(80.dp),
         enabled = enabled,
         shape = CircleShape,
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color.Black.copy(alpha = 0.3f),
-            contentColor = Color.White,
+            containerColor = containerColor,
+            contentColor = contentAndOutlineColor,
+            disabledContainerColor = containerColor,
+            disabledContentColor = contentAndOutlineColor,
         ),
         border = BorderStroke(
             width = 2.dp,
-            color = Color.White,
+            color = contentAndOutlineColor,
         )
     ) {
         content()
@@ -253,8 +265,7 @@ private fun DislikeIcon(modifier: Modifier = Modifier) {
     Icon(
         imageVector = Icons.Rounded.Close,
         contentDescription = stringResource(R.string.nope),
-        modifier = modifier.size(32.dp),
-        tint = Color.White
+        modifier = modifier.size(32.dp)
     )
 }
 
@@ -263,8 +274,7 @@ private fun LikeIcon(modifier: Modifier = Modifier) {
     Icon(
         imageVector = Icons.Rounded.Favorite,
         contentDescription = stringResource(R.string.like),
-        modifier = modifier.size(32.dp),
-        tint = Color.White
+        modifier = modifier.size(32.dp)
     )
 }
 
