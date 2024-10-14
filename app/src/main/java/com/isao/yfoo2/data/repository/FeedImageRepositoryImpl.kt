@@ -44,7 +44,9 @@ class FeedImageRepositoryImpl(
     override suspend fun addRandomFeedImage() {
         var insertedRowId: Long
         do {
-            val source = ImageSource.entries.random()
+            // Disable adding new images by This Waifu Does Not Exist for now.
+            // Right now, their quality contrasts too much with other sources and the app itself.
+            val source = (ImageSource.entries - ImageSource.THIS_WAIFU_DOES_NOT_EXIST).random()
             val imageId = source.getRandomImageId()
             insertedRowId = feedImageDao.saveFeedImage(
                 FeedImage(
