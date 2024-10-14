@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -120,13 +121,16 @@ fun FeedScreenContent(
                     }
             )
         }
-        val topItemPainter = topItem?.let { item ->
-            FeedCardDefaults.rememberRetryingAsyncImagePainter(
-                item = item,
-                width = cardImageWidth,
-                height = cardImageHeight
-            ).also {
-                SplashController(painterState = it.state)
+        val topItemPainter =
+            key(topItem) {
+                topItem?.let { item ->
+                    FeedCardDefaults.rememberRetryingAsyncImagePainter(
+                        item = item,
+                        width = cardImageWidth,
+                        height = cardImageHeight
+                    ).also {
+                        SplashController(painterState = it.state)
+                    }
             }
         }
 
@@ -141,18 +145,20 @@ fun FeedScreenContent(
             }
         }
 
-        FeedCard(
-            painter = topItemPainter,
-            modifier = Modifier
-                .padding(cardPadding)
-                .dismissible(
-                    state = topItemState,
-                    directions = setOfNotNull(
-                        DismissDirection.Start.takeIf { isDislikeAllowed },
-                        DismissDirection.End.takeIf { isLikeAllowed }
-                    ),
-                )
-        )
+        key(topItem) {
+            FeedCard(
+                painter = topItemPainter,
+                modifier = Modifier
+                    .padding(cardPadding)
+                    .dismissible(
+                        state = topItemState,
+                        directions = setOfNotNull(
+                            DismissDirection.Start.takeIf { isDislikeAllowed },
+                            DismissDirection.End.takeIf { isLikeAllowed }
+                        ),
+                    )
+            )
+        }
 
         FeedButtons(
             topItemState = topItemState,

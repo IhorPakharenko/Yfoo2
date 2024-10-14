@@ -149,9 +149,10 @@ private class DismissibleNode(
     }
 
     override fun onCancelPointerInput() {
-        state.onDismissCancel()
-        coroutineScope.launch {
-            state.reset()
+        runCatching {
+            coroutineScope.launch {
+                state.reset()
+            }
         }
     }
 
@@ -161,6 +162,7 @@ private class DismissibleNode(
         bounds: IntSize
     ) {
         if (!enabled) return
+        if (state.dismissDirection != null) return
 
         when (pass) {
             PointerEventPass.Initial -> {
@@ -168,6 +170,7 @@ private class DismissibleNode(
                 for (change in pointerEvent.changes) {
                     if (change.changedToDown()) {
                         velocityTracker.resetTracking()
+                        change.consume()
                     }
                 }
             }
@@ -193,6 +196,7 @@ private class DismissibleNode(
                         coroutineScope.launch {
                             state.performFling(velocityTracker.calculateVelocity())
                         }
+                        change.consume()
                     }
                 }
             }

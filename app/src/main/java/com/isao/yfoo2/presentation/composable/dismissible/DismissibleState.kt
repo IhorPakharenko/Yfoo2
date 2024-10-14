@@ -5,7 +5,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -33,26 +32,21 @@ enum class DismissDirection {
 
 @Composable
 fun rememberDismissibleState(
-    onDismiss: DismissibleState.(DismissDirection) -> Unit = {},
-    onDismissCancel: () -> Unit = {}
+    onDismiss: DismissibleState.(DismissDirection) -> Unit = {}
 ): DismissibleState {
     val layoutDirection = LocalLayoutDirection.current
     val onDismissState = rememberUpdatedState(onDismiss)
-    val onDismissCancelState = rememberUpdatedState(onDismissCancel)
     return remember {
         DismissibleState(
-            layoutDirection,
-            { onDismissState.value.invoke(this, it) },
-            { onDismissCancelState.value.invoke() }
-        )
+            layoutDirection
+        ) { onDismissState.value.invoke(this, it) }
     }
 }
 
 @Stable
 class DismissibleState(
     private val layoutDirection: LayoutDirection,
-    val onDismiss: DismissibleState.(DismissDirection) -> Unit,
-    val onDismissCancel: () -> Unit
+    val onDismiss: DismissibleState.(DismissDirection) -> Unit
 ) {
     private val offset = Animatable(Offset.Zero, Offset.VectorConverter)
 
@@ -188,12 +182,6 @@ class DismissibleState(
     }
 
     internal suspend fun performDrag(dragged: Offset) {
-        // If there is an ongoing dismiss animation, immediately finish it.
-        // The drag will then be performed on an updated composable.
-        dismissDirection?.let { direction ->
-            dismiss(direction, snap())
-        }
-
         val original = offset.targetValue
         val summed = original + dragged
         offset.animateTo(
