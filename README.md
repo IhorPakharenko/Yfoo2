@@ -4,9 +4,7 @@ An Android project showcasing best practices with Kotlin and latest Jetpack libr
 
 The architecture was inspired by the [Android Kotlin starter project](https://github.com/krzdabrowski/android-starter-2022), though it has been modified significantly.
 
-<img src="readme/splash.gif" alt="Feed" width="240">
-<img src="readme/feed.gif" alt="Feed" width="240">
-<img src="readme/liked.gif" alt="Feed" width="240">
+<img src="readme/splash.gif" alt="Feed" width="240"> <img src="readme/feed.gif" alt="Feed" width="240"> <img src="readme/liked.gif" alt="Feed" width="240">
 
 ### Description
 
