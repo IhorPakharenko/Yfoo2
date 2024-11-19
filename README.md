@@ -17,6 +17,7 @@ Supports light/dark mode and dynamic color from Material 3.
 
 ### Libraries used
 
+* Jetpack Compose
 * Kotlin Coroutines & Kotlin Flow
 * ~~Hilt~~ Koin
 * Jetpack: Navigation, Room and Lifecycle
